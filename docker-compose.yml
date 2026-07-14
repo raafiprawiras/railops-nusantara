@@ -1,0 +1,56 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_DEBUG=1
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - DATABASE_URL=postgresql://railops:railops_secret@postgres:5432/railops_nusantara
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=ap-southeast-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - S3_BUCKET_NAME=railops-bucket
+      - MAX_CONTENT_LENGTH=16777216
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_started
+    volumes:
+      - .:/app
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=railops
+      - POSTGRES_PASSWORD=railops_secret
+      - POSTGRES_DB=railops_nusantara
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U railops -d railops_nusantara"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,ec2
+      - DEBUG=0
+    volumes:
+      - localstack_data:/var/lib/localstack
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  localstack_data:
