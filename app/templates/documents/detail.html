@@ -1,0 +1,28 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ document.original_filename }} — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('documents.index') }}">Dokumen S3</a></li>
+<li class="breadcrumb-item active">Detail</li>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">{{ document.original_filename }}</h4>
+    <a href="{{ url_for('documents.download', id=document.id) }}" class="btn btn-success"><i class="bi bi-download me-1"></i> Download</a>
+</div>
+<div class="card stat-card p-4">
+    <table class="table table-borderless">
+        <tr><th class="text-muted" style="width:30%">Nama File</th><td>{{ document.original_filename }}</td></tr>
+        <tr><th class="text-muted">Kategori</th><td><span class="badge badge-info">{{ document.document_category }}</span></td></tr>
+        <tr><th class="text-muted">Tipe</th><td>{{ document.content_type }}</td></tr>
+        <tr><th class="text-muted">Ukuran</th><td>{{ document.file_size_display }}</td></tr>
+        <tr><th class="text-muted">Bucket</th><td><code>{{ document.bucket_name }}</code></td></tr>
+        <tr><th class="text-muted">Object Key</th><td><code>{{ document.object_key }}</code></td></tr>
+        <tr><th class="text-muted">Perjalanan</th><td>{{ document.trip.trip_number if document.trip else '-' }}</td></tr>
+        <tr><th class="text-muted">Gangguan</th><td>{{ document.incident.incident_number if document.incident else '-' }}</td></tr>
+        <tr><th class="text-muted">Diupload oleh</th><td>{{ document.uploader.full_name if document.uploader else '-' }}</td></tr>
+        <tr><th class="text-muted">Waktu Upload</th><td>{{ document.uploaded_at.strftime('%d/%m/%Y %H:%M') if document.uploaded_at else '-' }}</td></tr>
+    </table>
+</div>
+<a href="{{ url_for('documents.index') }}" class="btn btn-outline-secondary mt-3"><i class="bi bi-arrow-left me-1"></i> Kembali</a>
+{% endblock %}

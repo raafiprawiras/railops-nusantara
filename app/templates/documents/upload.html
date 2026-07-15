@@ -1,0 +1,41 @@
+{% extends "layouts/base.html" %}
+{% block title %}Upload Dokumen — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('documents.index') }}">Dokumen S3</a></li>
+<li class="breadcrumb-item active">Upload</li>
+{% endblock %}
+{% block content %}
+<h4 class="fw-bold mb-4">Upload Dokumen</h4>
+<div class="card stat-card p-4">
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">{{ form.file.label.text }}</label>
+                {{ form.file(class="form-control" + (" is-invalid" if form.file.errors else "")) }}
+                {% if form.file.errors %}<div class="invalid-feedback">{{ form.file.errors[0] }}</div>{% endif %}
+                <small class="text-muted">Format: PDF, PNG, JPG, DOCX, XLSX. Maks 16 MB.</small>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">{{ form.document_category.label.text }}</label>
+                {{ form.document_category(class="form-select") }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">{{ form.trip_id.label.text }}</label>
+                {{ form.trip_id(class="form-select") }}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">{{ form.incident_id.label.text }}</label>
+                {{ form.incident_id(class="form-select") }}
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-upload me-1"></i> Upload</button>
+            <a href="{{ url_for('documents.index') }}" class="btn btn-outline-secondary">Batal</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

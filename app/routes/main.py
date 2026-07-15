@@ -24,6 +24,7 @@ def dashboard():
     from app.models.train import Train
     from app.models.trip import Trip
     from app.models.incident import Incident
+    from app.models.document import Document
 
     # Counts from database
     kereta_aktif = Train.query.filter_by(status="Aktif").count()
@@ -46,6 +47,8 @@ def dashboard():
         Incident.status.in_(["Dilaporkan", "Dalam Penanganan"])
     ).count()
 
+    dokumen_s3 = Document.query.filter(Document.deleted_at.is_(None)).count()
+
     stats = {
         "kereta_aktif": kereta_aktif,
         "perjalanan_hari_ini": perjalanan_hari_ini,
@@ -54,7 +57,7 @@ def dashboard():
         "dibatalkan": dibatalkan,
         "gangguan_aktif": gangguan_aktif,
         "ec2_running": 2,
-        "dokumen_s3": 48,
+        "dokumen_s3": dokumen_s3,
     }
 
     # Recent trips (last 5)
