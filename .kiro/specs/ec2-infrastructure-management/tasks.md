@@ -1,0 +1,11 @@
+# Tasks — EC2 Infrastructure Management
+- [x] 1. Spec
+- [x] 2. EC2 service
+- [x] 3. Models (InfrastructureInstance, AuditLog)
+- [x] 4. Routes
+- [x] 5. Templates
+- [x] 6. Sidebar/dashboard/config
+- [x] 7. Migration
+- [x] 8. init_ec2_demo.py
+- [x] 9. Tests
+- [x] 10. Verify

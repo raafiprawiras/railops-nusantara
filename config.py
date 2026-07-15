@@ -24,6 +24,9 @@ class Config:
     # Upload
     MAX_CONTENT_LENGTH: int = int(os.environ.get("MAX_CONTENT_LENGTH", 16777216))
 
+    # EC2
+    EC2_IMAGE_ID: str = os.environ.get("EC2_IMAGE_ID", "ami-12345678")
+
 
 class DevelopmentConfig(Config):
     """Development configuration."""

@@ -1,0 +1,129 @@
+{% extends "layouts/base.html" %}
+{% block title %}Infrastruktur EC2 — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item active">Infrastruktur EC2</li>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-hdd-rack me-1"></i> Infrastruktur EC2</h4>
+    <div class="d-flex gap-2">
+        {% if current_user.role in ['administrator', 'operator'] %}
+        <form method="POST" action="{{ url_for('ec2.sync') }}" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-repeat me-1"></i> Sync</button>
+        </form>
+        {% endif %}
+        {% if current_user.role == 'administrator' %}
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal"><i class="bi bi-plus-lg me-1"></i> Buat Instance</button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Status -->
+<div class="card stat-card p-3 mb-4">
+    <div class="d-flex align-items-center">
+        {% if ec2_healthy %}
+        <span class="badge badge-success me-2">Online</span> <span>LocalStack EC2 tersedia.</span>
+        {% else %}
+        <span class="badge badge-danger me-2">Offline</span> <span class="text-muted">LocalStack EC2 tidak tersedia.</span>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Instances Table -->
+<div class="card stat-card">
+    {% if instances %}
+    <div class="table-responsive">
+        <table class="table table-railops table-hover mb-0">
+            <thead><tr><th>Nama</th><th>Instance ID</th><th>Type</th><th>Purpose</th><th>State</th><th class="text-end">Aksi</th></tr></thead>
+            <tbody>
+                {% for inst in instances %}
+                <tr>
+                    <td class="fw-semibold">{{ inst.instance_name }}</td>
+                    <td><code class="small">{{ inst.instance_id }}</code></td>
+                    <td>{{ inst.instance_type }}</td>
+                    <td>{{ inst.purpose }}</td>
+                    <td>
+                        {% if inst.state == 'running' %}<span class="badge badge-success">running</span>
+                        {% elif inst.state == 'stopped' %}<span class="badge bg-secondary">stopped</span>
+                        {% elif inst.state == 'pending' %}<span class="badge badge-warning">pending</span>
+                        {% elif inst.state == 'terminated' %}<span class="badge badge-danger">terminated</span>
+                        {% else %}<span class="badge bg-secondary">{{ inst.state }}</span>{% endif %}
+                    </td>
+                    <td class="text-end">
+                        {% set actions = inst.get_allowed_actions() %}
+                        {% if 'start' in actions and current_user.role in ['administrator', 'operator'] %}
+                        <form method="POST" action="{{ url_for('ec2.start', instance_id=inst.instance_id) }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-sm btn-outline-success" title="Start"><i class="bi bi-play-fill"></i></button>
+                        </form>
+                        {% endif %}
+                        {% if 'stop' in actions and current_user.role in ['administrator', 'operator'] %}
+                        <form method="POST" action="{{ url_for('ec2.stop', instance_id=inst.instance_id) }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-sm btn-outline-warning" title="Stop"><i class="bi bi-stop-fill"></i></button>
+                        </form>
+                        {% endif %}
+                        {% if 'reboot' in actions and current_user.role in ['administrator', 'operator'] %}
+                        <form method="POST" action="{{ url_for('ec2.reboot', instance_id=inst.instance_id) }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-sm btn-outline-info" title="Reboot"><i class="bi bi-arrow-clockwise"></i></button>
+                        </form>
+                        {% endif %}
+                        {% if 'terminate' in actions and current_user.role == 'administrator' %}
+                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#termModal{{ inst.id }}" title="Terminate"><i class="bi bi-x-circle"></i></button>
+                        <div class="modal fade" id="termModal{{ inst.id }}" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+                            <div class="modal-header"><h5 class="modal-title">Konfirmasi Terminate</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                            <div class="modal-body">Terminate <strong>{{ inst.instance_name }}</strong>? Tindakan ini tidak dapat dibatalkan.</div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <form method="POST" action="{{ url_for('ec2.terminate', instance_id=inst.instance_id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button class="btn btn-danger">Terminate</button>
+                                </form>
+                            </div>
+                        </div></div></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="p-5 text-center text-muted">
+        <i class="bi bi-hdd-rack" style="font-size:3rem;"></i>
+        <p class="mt-2 mb-0">Belum ada instance EC2.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Create Modal -->
+{% if current_user.role == 'administrator' %}
+<div class="modal fade" id="createModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <form method="POST" action="{{ url_for('ec2.create') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="modal-header"><h5 class="modal-title">Buat Instance EC2</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label class="form-label">Nama Instance</label>
+                <select name="instance_name" class="form-select" required>
+                    {% for n in name_choices %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Purpose</label>
+                <select name="purpose" class="form-select" required>
+                    {% for p in purpose_choices %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button class="btn btn-primary">Buat</button>
+        </div>
+    </form>
+</div></div></div>
+{% endif %}
+{% endblock %}

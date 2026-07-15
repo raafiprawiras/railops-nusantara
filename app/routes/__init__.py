@@ -12,6 +12,7 @@ def register_blueprints(app: Flask) -> None:
     from app.routes.trip_routes import trips_bp
     from app.routes.incident_routes import incidents_bp
     from app.routes.document_routes import documents_bp
+    from app.routes.ec2_routes import ec2_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -20,3 +21,4 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(trips_bp)
     app.register_blueprint(incidents_bp)
     app.register_blueprint(documents_bp)
+    app.register_blueprint(ec2_bp)

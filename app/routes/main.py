@@ -25,6 +25,7 @@ def dashboard():
     from app.models.trip import Trip
     from app.models.incident import Incident
     from app.models.document import Document
+    from app.models.infrastructure import InfrastructureInstance
 
     # Counts from database
     kereta_aktif = Train.query.filter_by(status="Aktif").count()
@@ -56,7 +57,7 @@ def dashboard():
         "terlambat": terlambat,
         "dibatalkan": dibatalkan,
         "gangguan_aktif": gangguan_aktif,
-        "ec2_running": 2,
+        "ec2_running": InfrastructureInstance.query.filter_by(state="running").count(),
         "dokumen_s3": dokumen_s3,
     }
 
