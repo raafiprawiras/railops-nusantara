@@ -19,10 +19,10 @@ PER_PAGE = 10
 
 def _populate_form_choices(form):
     """Populate select fields with train/station choices."""
-    trains = Train.query.filter(Train.status == "Aktif").order_by(Train.train_name).all()
+    trains = Train.query.order_by(Train.train_name).all()
     stations = Station.query.filter(Station.operational_status == "Aktif").order_by(Station.station_name).all()
 
-    form.train_id.choices = [(t.id, f"{t.train_code} — {t.train_name}") for t in trains]
+    form.train_id.choices = [(t.id, f"{t.train_code} — {t.train_name} [{t.status}]") for t in trains]
     form.origin_station_id.choices = [(s.id, f"{s.station_code} — {s.station_name}") for s in stations]
     form.destination_station_id.choices = [(s.id, f"{s.station_code} — {s.station_name}") for s in stations]
 
