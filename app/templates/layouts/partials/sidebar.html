@@ -75,7 +75,7 @@
         <!-- Laporan -->
         <li class="sidebar-heading">Laporan</li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
+            <a href="{{ url_for('reports.index') }}" class="sidebar-link">
                 <i class="bi bi-bar-chart-line"></i> Laporan
             </a>
         </li>
@@ -88,12 +88,12 @@
         <!-- Pengaturan -->
         <li class="sidebar-heading">Pengaturan</li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
+            <a href="{{ url_for('users.index') }}" class="sidebar-link">
                 <i class="bi bi-people"></i> Pengguna
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
+            <a href="{{ url_for('profile.index') }}" class="sidebar-link">
                 <i class="bi bi-person-circle"></i> Profil
             </a>
         </li>

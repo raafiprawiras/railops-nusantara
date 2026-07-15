@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}
+{% block title %}Laporan — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item active">Laporan</li>
+{% endblock %}
+{% block content %}
+<h4 class="fw-bold mb-4"><i class="bi bi-bar-chart-line me-1"></i> Laporan Operasional</h4>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card stat-card p-4 text-center">
+            <i class="bi bi-signpost-2 text-primary" style="font-size:2rem;"></i>
+            <h6 class="mt-2">Perjalanan</h6>
+            <a href="{{ url_for('reports.trips_report') }}" class="btn btn-outline-primary btn-sm mt-2">Lihat Laporan</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card p-4 text-center">
+            <i class="bi bi-exclamation-triangle text-warning" style="font-size:2rem;"></i>
+            <h6 class="mt-2">Gangguan</h6>
+            <a href="{{ url_for('reports.incidents_report') }}" class="btn btn-outline-warning btn-sm mt-2">Lihat Laporan</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card p-4 text-center">
+            <i class="bi bi-clock-history text-success" style="font-size:2rem;"></i>
+            <h6 class="mt-2">Ketepatan Waktu</h6>
+            <a href="{{ url_for('reports.punctuality_report') }}" class="btn btn-outline-success btn-sm mt-2">Lihat Laporan</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card p-4 text-center">
+            <i class="bi bi-hdd-rack text-info" style="font-size:2rem;"></i>
+            <h6 class="mt-2">Infrastruktur</h6>
+            <a href="{{ url_for('reports.infrastructure_report') }}" class="btn btn-outline-info btn-sm mt-2">Lihat Laporan</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card p-4 text-center">
+            <i class="bi bi-folder2-open text-secondary" style="font-size:2rem;"></i>
+            <h6 class="mt-2">Dokumen</h6>
+            <a href="{{ url_for('reports.documents_report') }}" class="btn btn-outline-secondary btn-sm mt-2">Lihat Laporan</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

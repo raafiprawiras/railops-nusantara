@@ -1,0 +1,30 @@
+{% extends "layouts/base.html" %}
+{% block title %}Laporan Gangguan — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('reports.index') }}">Laporan</a></li>
+<li class="breadcrumb-item active">Gangguan</li>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">Laporan Gangguan</h4>
+    <a href="{{ url_for('reports.incidents_csv') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i> Export CSV</a>
+</div>
+<div class="card stat-card p-3 text-center mb-4"><div class="stat-value">{{ total }}</div><div class="stat-label">Total Gangguan</div></div>
+<div class="card stat-card p-3 mb-4">
+    <form method="GET" class="row g-2 align-items-end">
+        <div class="col-md-2"><label class="form-label small">Mulai</label><input type="date" name="start_date" class="form-control" value="{{ start_date }}"></div>
+        <div class="col-md-2"><label class="form-label small">Sampai</label><input type="date" name="end_date" class="form-control" value="{{ end_date }}"></div>
+        <div class="col-md-3"><label class="form-label small">Status</label><select name="status" class="form-select"><option value="">Semua</option>{% for s in status_choices %}<option value="{{ s }}" {{ 'selected' if status == s }}>{{ s }}</option>{% endfor %}</select></div>
+        <div class="col-md-3"><label class="form-label small">Prioritas</label><select name="priority" class="form-select"><option value="">Semua</option>{% for p in priority_choices %}<option value="{{ p }}" {{ 'selected' if priority == p }}>{{ p }}</option>{% endfor %}</select></div>
+        <div class="col-md-2"><button class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Filter</button></div>
+    </form>
+</div>
+<div class="card stat-card">
+    {% if incidents %}
+    <div class="table-responsive"><table class="table table-railops table-hover mb-0"><thead><tr><th>No.</th><th>Jenis</th><th>Lokasi</th><th>Prioritas</th><th>Status</th><th>Waktu</th></tr></thead><tbody>
+    {% for inc in incidents %}<tr><td>{{ inc.incident_number }}</td><td>{{ inc.incident_type }}</td><td>{{ inc.location }}</td><td>{{ inc.priority }}</td><td>{{ inc.status }}</td><td>{{ inc.occurred_at.strftime('%d/%m/%Y %H:%M') if inc.occurred_at else '-' }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    {% else %}<div class="p-5 text-center text-muted">Tidak ada data.</div>{% endif %}
+</div>
+{% endblock %}

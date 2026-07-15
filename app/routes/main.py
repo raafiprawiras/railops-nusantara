@@ -1,10 +1,8 @@
 """Main blueprint — dashboard, health check."""
 
-from datetime import datetime, timezone
-
 from flask import Blueprint, jsonify, redirect, render_template, url_for, current_app
 from flask_login import login_required
-from sqlalchemy import text, func
+from sqlalchemy import text
 
 from app.extensions import db
 
@@ -20,100 +18,26 @@ def index():
 @main_bp.route("/dashboard")
 @login_required
 def dashboard():
-    """Dashboard with operational statistics from database."""
-    from app.models.train import Train
-    from app.models.trip import Trip
-    from app.models.incident import Incident
-    from app.models.document import Document
-    from app.models.infrastructure import InfrastructureInstance
+    """Dashboard with real operational statistics from database."""
+    from app.services import dashboard_service
 
-    # Counts from database
-    kereta_aktif = Train.query.filter_by(status="Aktif").count()
-
-    today = datetime.now(timezone.utc).date()
-    today_start = datetime(today.year, today.month, today.day, tzinfo=timezone.utc)
-    today_end = datetime(today.year, today.month, today.day, 23, 59, 59, tzinfo=timezone.utc)
-
-    trips_today_query = Trip.query.filter(
-        Trip.scheduled_departure.between(today_start, today_end)
-    )
-    perjalanan_hari_ini = trips_today_query.count()
-    tepat_waktu = trips_today_query.filter(Trip.status == "Tiba", Trip.delay_minutes == 0).count()
-    terlambat = trips_today_query.filter(
-        Trip.status.in_(["Terlambat", "Tiba"]), Trip.delay_minutes > 0
-    ).count()
-    dibatalkan = trips_today_query.filter(Trip.status == "Dibatalkan").count()
-
-    gangguan_aktif = Incident.query.filter(
-        Incident.status.in_(["Dilaporkan", "Dalam Penanganan"])
-    ).count()
-
-    dokumen_s3 = Document.query.filter(Document.deleted_at.is_(None)).count()
-
-    stats = {
-        "kereta_aktif": kereta_aktif,
-        "perjalanan_hari_ini": perjalanan_hari_ini,
-        "tepat_waktu": tepat_waktu,
-        "terlambat": terlambat,
-        "dibatalkan": dibatalkan,
-        "gangguan_aktif": gangguan_aktif,
-        "ec2_running": InfrastructureInstance.query.filter_by(state="running").count(),
-        "dokumen_s3": dokumen_s3,
-    }
-
-    # Recent trips (last 5)
-    recent_trips_db = Trip.query.order_by(Trip.scheduled_departure.desc()).limit(5).all()
-    recent_trips = []
-    for t in recent_trips_db:
-        if t.status == "Tiba" and t.delay_minutes == 0:
-            display_status = "Tepat Waktu"
-        elif t.delay_minutes > 0:
-            display_status = "Terlambat"
-        elif t.status == "Dibatalkan":
-            display_status = "Dibatalkan"
-        else:
-            display_status = t.status
-        recent_trips.append({
-            "train": t.train.train_name if t.train else "?",
-            "route": t.route_display,
-            "departure": t.scheduled_departure.strftime("%H:%M") if t.scheduled_departure else "-",
-            "status": display_status,
-        })
-
-    # Fallback static data if no trips exist
-    if not recent_trips:
-        recent_trips = [
-            {"train": "Argo Bromo", "route": "Jakarta — Surabaya", "departure": "06:00", "status": "Tepat Waktu"},
-            {"train": "Taksaka", "route": "Jakarta — Yogyakarta", "departure": "07:30", "status": "Terlambat"},
-            {"train": "Gajayana", "route": "Jakarta — Malang", "departure": "08:15", "status": "Tepat Waktu"},
-        ]
-
-    recent_incidents_db = Incident.query.order_by(Incident.created_at.desc()).limit(5).all()
-    recent_incidents = []
-    for inc in recent_incidents_db:
-        recent_incidents.append({
-            "location": inc.location,
-            "type": inc.incident_type,
-            "priority": inc.priority,
-        })
-
-    if not recent_incidents:
-        recent_incidents = [
-            {"location": "Stasiun Cirebon", "type": "Sinyal", "priority": "Tinggi"},
-            {"location": "KM 120 Semarang", "type": "Rel", "priority": "Sedang"},
-            {"location": "Stasiun Tegal", "type": "Listrik", "priority": "Rendah"},
-        ]
-
-    delay_labels = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"]
-    delay_values = [12, 8, 15, 6, 10, 4, 7]
+    stats = dashboard_service.get_dashboard_stats()
+    chart_data = dashboard_service.get_trip_chart_data()
+    incident_priority = dashboard_service.get_incident_priority_stats()
+    recent_trips = dashboard_service.get_recent_trips(5)
+    recent_incidents = dashboard_service.get_recent_incidents(5)
+    recent_audit = dashboard_service.get_recent_audit_logs(5)
 
     return render_template(
         "dashboard.html",
         stats=stats,
         recent_trips=recent_trips,
         recent_incidents=recent_incidents,
-        delay_labels=delay_labels,
-        delay_values=delay_values,
+        recent_audit=recent_audit,
+        chart_data=chart_data,
+        incident_priority=incident_priority,
+        delay_labels=chart_data["delay_labels"],
+        delay_values=chart_data["delay_values"],
     )
 
 

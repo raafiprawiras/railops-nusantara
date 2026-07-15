@@ -38,6 +38,9 @@ def create_app(config_class: type[Config] | None = None) -> Flask:
     # Context processors
     _register_context_processors(app)
 
+    # CLI commands
+    _register_commands(app)
+
     return app
 
 
@@ -93,3 +96,10 @@ def _register_context_processors(app: Flask) -> None:
         return {
             "current_date": today.strftime("%A, %d %B %Y"),
         }
+
+
+def _register_commands(app: Flask) -> None:
+    """Register custom CLI commands."""
+    from app.commands import register_commands
+
+    register_commands(app)
