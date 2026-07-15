@@ -23,6 +23,7 @@ def dashboard():
     """Dashboard with operational statistics from database."""
     from app.models.train import Train
     from app.models.trip import Trip
+    from app.models.incident import Incident
 
     # Counts from database
     kereta_aktif = Train.query.filter_by(status="Aktif").count()
@@ -41,7 +42,9 @@ def dashboard():
     ).count()
     dibatalkan = trips_today_query.filter(Trip.status == "Dibatalkan").count()
 
-    gangguan_aktif = Train.query.filter_by(status="Mengalami Gangguan").count()
+    gangguan_aktif = Incident.query.filter(
+        Incident.status.in_(["Dilaporkan", "Dalam Penanganan"])
+    ).count()
 
     stats = {
         "kereta_aktif": kereta_aktif,
@@ -81,11 +84,21 @@ def dashboard():
             {"train": "Gajayana", "route": "Jakarta — Malang", "departure": "08:15", "status": "Tepat Waktu"},
         ]
 
-    recent_incidents = [
-        {"location": "Stasiun Cirebon", "type": "Sinyal", "priority": "Tinggi"},
-        {"location": "KM 120 Semarang", "type": "Rel", "priority": "Sedang"},
-        {"location": "Stasiun Tegal", "type": "Listrik", "priority": "Rendah"},
-    ]
+    recent_incidents_db = Incident.query.order_by(Incident.created_at.desc()).limit(5).all()
+    recent_incidents = []
+    for inc in recent_incidents_db:
+        recent_incidents.append({
+            "location": inc.location,
+            "type": inc.incident_type,
+            "priority": inc.priority,
+        })
+
+    if not recent_incidents:
+        recent_incidents = [
+            {"location": "Stasiun Cirebon", "type": "Sinyal", "priority": "Tinggi"},
+            {"location": "KM 120 Semarang", "type": "Rel", "priority": "Sedang"},
+            {"location": "Stasiun Tegal", "type": "Listrik", "priority": "Rendah"},
+        ]
 
     delay_labels = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"]
     delay_values = [12, 8, 15, 6, 10, 4, 7]

@@ -1,0 +1,105 @@
+{% extends "layouts/base.html" %}
+{% block title %}Gangguan — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item active">Gangguan</li>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">Laporan Gangguan</h4>
+    {% if current_user.role in ['administrator', 'operator'] %}
+    <a href="{{ url_for('incidents.create') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Lapor Gangguan
+    </a>
+    {% endif %}
+</div>
+
+<div class="card stat-card p-3 mb-4">
+    <form method="GET" action="{{ url_for('incidents.index') }}" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small">Cari</label>
+            <input type="text" name="search" class="form-control" placeholder="Nomor gangguan..." value="{{ search }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small">Status</label>
+            <select name="status" class="form-select">
+                <option value="">Semua</option>
+                {% for s in status_choices %}<option value="{{ s }}" {{ 'selected' if status == s }}>{{ s }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small">Prioritas</label>
+            <select name="priority" class="form-select">
+                <option value="">Semua</option>
+                {% for p in priority_choices %}<option value="{{ p }}" {{ 'selected' if priority == p }}>{{ p }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Jenis</label>
+            <select name="type" class="form-select">
+                <option value="">Semua</option>
+                {% for t in type_choices %}<option value="{{ t }}" {{ 'selected' if incident_type == t }}>{{ t }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i> Cari</button>
+        </div>
+    </form>
+</div>
+
+<div class="card stat-card">
+    {% if incidents %}
+    <div class="table-responsive">
+        <table class="table table-railops table-hover mb-0">
+            <thead>
+                <tr><th>No.</th><th>Jenis</th><th>Lokasi</th><th>Prioritas</th><th>Status</th><th class="text-end">Aksi</th></tr>
+            </thead>
+            <tbody>
+                {% for inc in incidents %}
+                <tr>
+                    <td class="fw-semibold">{{ inc.incident_number }}</td>
+                    <td>{{ inc.incident_type }}</td>
+                    <td>{{ inc.location }}</td>
+                    <td>
+                        {% if inc.priority == 'Darurat' %}<span class="badge badge-danger">{{ inc.priority }}</span>
+                        {% elif inc.priority == 'Tinggi' %}<span class="badge badge-warning">{{ inc.priority }}</span>
+                        {% elif inc.priority == 'Sedang' %}<span class="badge badge-info">{{ inc.priority }}</span>
+                        {% else %}<span class="badge bg-secondary">{{ inc.priority }}</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if inc.status == 'Dilaporkan' %}<span class="badge badge-danger">{{ inc.status }}</span>
+                        {% elif inc.status == 'Dalam Penanganan' %}<span class="badge badge-warning">{{ inc.status }}</span>
+                        {% elif inc.status == 'Selesai' %}<span class="badge badge-success">{{ inc.status }}</span>
+                        {% else %}<span class="badge bg-secondary">{{ inc.status }}</span>{% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ url_for('incidents.detail', id=inc.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+                        {% if current_user.role in ['administrator', 'operator'] %}
+                        <a href="{{ url_for('incidents.edit', id=inc.id) }}" class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil"></i></a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if pagination.pages > 1 %}
+    <div class="card-footer bg-white">
+        <nav><ul class="pagination pagination-sm justify-content-center mb-0">
+            <li class="page-item {{ 'disabled' if not pagination.has_prev }}"><a class="page-link" href="{{ url_for('incidents.index', page=pagination.prev_num, search=search, status=status, priority=priority, type=incident_type) }}">Sebelumnya</a></li>
+            {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if p %}<li class="page-item {{ 'active' if p == pagination.page }}"><a class="page-link" href="{{ url_for('incidents.index', page=p, search=search, status=status, priority=priority, type=incident_type) }}">{{ p }}</a></li>
+                {% else %}<li class="page-item disabled"><span class="page-link">...</span></li>{% endif %}
+            {% endfor %}
+            <li class="page-item {{ 'disabled' if not pagination.has_next }}"><a class="page-link" href="{{ url_for('incidents.index', page=pagination.next_num, search=search, status=status, priority=priority, type=incident_type) }}">Berikutnya</a></li>
+        </ul></nav>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="p-5 text-center text-muted">
+        <i class="bi bi-shield-check" style="font-size: 3rem;"></i>
+        <p class="mt-2 mb-0">Tidak ada laporan gangguan.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
