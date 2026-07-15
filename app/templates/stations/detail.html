@@ -1,0 +1,56 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ station.station_name }} — RailOps Nusantara{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('stations.index') }}">Data Stasiun</a></li>
+<li class="breadcrumb-item active">{{ station.station_code }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">{{ station.station_name }}</h4>
+    {% if current_user.role == 'administrator' %}
+    <a href="{{ url_for('stations.edit', id=station.id) }}" class="btn btn-warning">
+        <i class="bi bi-pencil me-1"></i> Edit
+    </a>
+    {% endif %}
+</div>
+
+<div class="card stat-card p-4">
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-borderless">
+                <tr><th class="text-muted" style="width:40%">Kode Stasiun</th><td>{{ station.station_code }}</td></tr>
+                <tr><th class="text-muted">Nama Stasiun</th><td>{{ station.station_name }}</td></tr>
+                <tr><th class="text-muted">Kota</th><td>{{ station.city }}</td></tr>
+                <tr><th class="text-muted">Provinsi</th><td>{{ station.province }}</td></tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table table-borderless">
+                <tr><th class="text-muted" style="width:40%">Jumlah Peron</th><td>{{ station.platform_count }}</td></tr>
+                <tr>
+                    <th class="text-muted">Status</th>
+                    <td>
+                        {% if station.operational_status == 'Aktif' %}
+                            <span class="badge badge-success">{{ station.operational_status }}</span>
+                        {% elif station.operational_status == 'Dalam Renovasi' %}
+                            <span class="badge badge-warning">{{ station.operational_status }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ station.operational_status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><th class="text-muted">Dibuat</th><td>{{ station.created_at.strftime('%d/%m/%Y %H:%M') if station.created_at else '-' }}</td></tr>
+                <tr><th class="text-muted">Diperbarui</th><td>{{ station.updated_at.strftime('%d/%m/%Y %H:%M') if station.updated_at else '-' }}</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<a href="{{ url_for('stations.index') }}" class="btn btn-outline-secondary mt-3">
+    <i class="bi bi-arrow-left me-1"></i> Kembali
+</a>
+{% endblock %}

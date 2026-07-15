@@ -1,0 +1,13 @@
+{% if trip.status == 'Tiba' %}
+<span class="badge badge-success">{{ trip.status }}</span>
+{% elif trip.status == 'Terlambat' %}
+<span class="badge badge-danger">{{ trip.status }}</span>
+{% elif trip.status == 'Dibatalkan' %}
+<span class="badge bg-secondary">{{ trip.status }}</span>
+{% elif trip.status in ('Berangkat', 'Dalam Perjalanan') %}
+<span class="badge badge-info">{{ trip.status }}</span>
+{% elif trip.status == 'Persiapan' %}
+<span class="badge badge-warning">{{ trip.status }}</span>
+{% else %}
+<span class="badge bg-primary">{{ trip.status }}</span>
+{% endif %}

@@ -1,0 +1,112 @@
+{% extends "layouts/base.html" %}
+{% block title %}Jadwal Perjalanan — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item active">Jadwal Perjalanan</li>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">Jadwal Perjalanan</h4>
+    {% if current_user.role in ['administrator', 'operator'] %}
+    <a href="{{ url_for('trips.create') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Tambah Jadwal
+    </a>
+    {% endif %}
+</div>
+
+<div class="card stat-card p-3 mb-4">
+    <form method="GET" action="{{ url_for('trips.index') }}" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small">Cari Nomor</label>
+            <input type="text" name="search" class="form-control" placeholder="Nomor perjalanan..." value="{{ search }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small">Status</label>
+            <select name="status" class="form-select">
+                <option value="">Semua</option>
+                {% for s in status_choices %}
+                <option value="{{ s }}" {{ 'selected' if status == s }}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Kereta</label>
+            <select name="train_id" class="form-select">
+                <option value="">Semua Kereta</option>
+                {% for t in trains %}
+                <option value="{{ t.id }}" {{ 'selected' if train_id == t.id }}>{{ t.train_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small">Tanggal</label>
+            <input type="date" name="date" class="form-control" value="{{ date_filter }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i> Cari</button>
+        </div>
+    </form>
+</div>
+
+<div class="card stat-card">
+    {% if trips %}
+    <div class="table-responsive">
+        <table class="table table-railops table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>No. Perjalanan</th>
+                    <th>Kereta</th>
+                    <th>Rute</th>
+                    <th>Berangkat</th>
+                    <th>Status</th>
+                    <th class="text-end">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trip in trips %}
+                <tr>
+                    <td class="fw-semibold">{{ trip.trip_number }}</td>
+                    <td>{{ trip.train.train_name }}</td>
+                    <td>{{ trip.route_display }}</td>
+                    <td>{{ trip.scheduled_departure.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>{% include "trips/_status_badge.html" %}</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('trips.detail', id=trip.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+                        {% if current_user.role in ['administrator', 'operator'] %}
+                        <a href="{{ url_for('trips.edit', id=trip.id) }}" class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil"></i></a>
+                        {% endif %}
+                        {% if current_user.role == 'administrator' %}
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#delModal{{ trip.id }}"><i class="bi bi-trash"></i></button>
+                        <div class="modal fade" id="delModal{{ trip.id }}" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+                            <div class="modal-header"><h5 class="modal-title">Konfirmasi Hapus</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                            <div class="modal-body">Hapus jadwal <strong>{{ trip.trip_number }}</strong>?</div>
+                            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <form method="POST" action="{{ url_for('trips.delete', id=trip.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="btn btn-danger">Hapus</button></form></div>
+                        </div></div></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if pagination.pages > 1 %}
+    <div class="card-footer bg-white">
+        <nav><ul class="pagination pagination-sm justify-content-center mb-0">
+            <li class="page-item {{ 'disabled' if not pagination.has_prev }}"><a class="page-link" href="{{ url_for('trips.index', page=pagination.prev_num, search=search, status=status, train_id=train_id, date=date_filter) }}">Sebelumnya</a></li>
+            {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if p %}<li class="page-item {{ 'active' if p == pagination.page }}"><a class="page-link" href="{{ url_for('trips.index', page=p, search=search, status=status, train_id=train_id, date=date_filter) }}">{{ p }}</a></li>
+                {% else %}<li class="page-item disabled"><span class="page-link">...</span></li>{% endif %}
+            {% endfor %}
+            <li class="page-item {{ 'disabled' if not pagination.has_next }}"><a class="page-link" href="{{ url_for('trips.index', page=pagination.next_num, search=search, status=status, train_id=train_id, date=date_filter) }}">Berikutnya</a></li>
+        </ul></nav>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="p-5 text-center text-muted">
+        <i class="bi bi-calendar3" style="font-size: 3rem;"></i>
+        <p class="mt-2 mb-0">Belum ada jadwal perjalanan.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -43,20 +43,22 @@ def create_app(config_class: type[Config] | None = None) -> Flask:
 
 def _register_extensions(app: Flask) -> None:
     """Initialize Flask extensions."""
-    from app.extensions import db, migrate, login_manager
+    from app.extensions import db, migrate, login_manager, csrf
+    from app.models.user import User
 
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    csrf.init_app(app)
 
-    login_manager.login_view = "main.login"
+    login_manager.login_view = "auth.login"
     login_manager.login_message = "Silakan login untuk mengakses halaman ini."
     login_manager.login_message_category = "warning"
 
     @login_manager.user_loader
-    def load_user(user_id):
-        """Load user by ID. Stub until auth module is implemented."""
-        return None
+    def load_user(user_id: str):
+        """Load user by ID from database."""
+        return db.session.get(User, int(user_id))
 
 
 def _register_blueprints(app: Flask) -> None:
@@ -68,6 +70,10 @@ def _register_blueprints(app: Flask) -> None:
 
 def _register_error_handlers(app: Flask) -> None:
     """Register custom error pages."""
+
+    @app.errorhandler(403)
+    def forbidden(e):
+        return render_template("errors/403.html"), 403
 
     @app.errorhandler(404)
     def page_not_found(e):

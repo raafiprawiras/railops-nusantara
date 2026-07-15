@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+{% block title %}Monitoring — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item active">Monitoring</li>
+{% endblock %}
+{% block content %}
+<h4 class="fw-bold mb-4"><i class="bi bi-activity me-1"></i> Monitoring Perjalanan Aktif</h4>
+
+{% if trips %}
+<div class="row g-3">
+    {% for trip in trips %}
+    <div class="col-lg-6">
+        <div class="card stat-card p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <span class="fw-bold">{{ trip.trip_number }}</span>
+                    <span class="text-muted ms-2">{{ trip.train.train_name }}</span>
+                </div>
+                {% include "trips/_status_badge.html" %}
+            </div>
+            <p class="small mb-1 text-muted">
+                <i class="bi bi-geo-alt me-1"></i> {{ trip.route_display }}
+            </p>
+            <p class="small mb-2 text-muted">
+                <i class="bi bi-clock me-1"></i> {{ trip.scheduled_departure.strftime('%H:%M') }} — {{ trip.scheduled_arrival.strftime('%H:%M') }}
+                {% if trip.delay_minutes > 0 %}
+                <span class="text-danger ms-2">+{{ trip.delay_minutes }} min</span>
+                {% endif %}
+            </p>
+            <a href="{{ url_for('trips.detail', id=trip.id) }}" class="btn btn-sm btn-outline-primary">Detail & Update</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card stat-card p-5 text-center text-muted">
+    <i class="bi bi-check-circle" style="font-size: 3rem;"></i>
+    <p class="mt-2 mb-0">Tidak ada perjalanan aktif saat ini.</p>
+</div>
+{% endif %}
+{% endblock %}

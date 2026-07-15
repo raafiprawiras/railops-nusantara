@@ -32,13 +32,16 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
-    """Testing configuration."""
+    """Testing configuration.
+
+    Uses SQLite in-memory by default for fast local tests.
+    Set TEST_DATABASE_URL to use PostgreSQL for integration tests.
+    """
 
     TESTING: bool = True
     SQLALCHEMY_DATABASE_URI: str = os.environ.get(
-        "TEST_DATABASE_URL", "postgresql://railops:railops_secret@localhost:5432/railops_test"
+        "TEST_DATABASE_URL", "sqlite:///:memory:"
     )
-    SQLALCHEMY_ENGINE_OPTIONS: dict = {"connect_args": {"connect_timeout": 3}}
     WTF_CSRF_ENABLED: bool = False
 
 

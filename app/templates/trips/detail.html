@@ -1,0 +1,106 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ trip.trip_number }} — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('trips.index') }}">Jadwal</a></li>
+<li class="breadcrumb-item active">{{ trip.trip_number }}</li>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">{{ trip.trip_number }} — {{ trip.train.train_name }}</h4>
+    {% if current_user.role in ['administrator', 'operator'] %}
+    <a href="{{ url_for('trips.edit', id=trip.id) }}" class="btn btn-warning"><i class="bi bi-pencil me-1"></i> Edit</a>
+    {% endif %}
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-7">
+        <div class="card stat-card p-4">
+            <h6 class="fw-bold mb-3">Detail Perjalanan</h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-borderless table-sm">
+                        <tr><th class="text-muted">Kereta</th><td>{{ trip.train.train_code }} — {{ trip.train.train_name }}</td></tr>
+                        <tr><th class="text-muted">Asal</th><td>{{ trip.origin_station.station_name }}</td></tr>
+                        <tr><th class="text-muted">Tujuan</th><td>{{ trip.destination_station.station_name }}</td></tr>
+                        <tr><th class="text-muted">Peron</th><td>{{ trip.platform }}</td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-borderless table-sm">
+                        <tr><th class="text-muted">Jadwal Berangkat</th><td>{{ trip.scheduled_departure.strftime('%d/%m/%Y %H:%M') }}</td></tr>
+                        <tr><th class="text-muted">Jadwal Tiba</th><td>{{ trip.scheduled_arrival.strftime('%d/%m/%Y %H:%M') }}</td></tr>
+                        <tr><th class="text-muted">Aktual Berangkat</th><td>{{ trip.actual_departure.strftime('%d/%m/%Y %H:%M') if trip.actual_departure else '-' }}</td></tr>
+                        <tr><th class="text-muted">Aktual Tiba</th><td>{{ trip.actual_arrival.strftime('%d/%m/%Y %H:%M') if trip.actual_arrival else '-' }}</td></tr>
+                        <tr><th class="text-muted">Keterlambatan</th><td>{{ trip.delay_minutes }} menit</td></tr>
+                        <tr><th class="text-muted">Status</th><td>{% include "trips/_status_badge.html" %}</td></tr>
+                    </table>
+                </div>
+            </div>
+            {% if trip.notes %}
+            <p class="text-muted small mt-2"><strong>Catatan:</strong> {{ trip.notes }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Status Update Form -->
+    {% if current_user.role in ['administrator', 'operator'] %}
+    <div class="col-lg-5">
+        <div class="card stat-card p-4">
+            <h6 class="fw-bold mb-3">Update Status</h6>
+            <form method="POST" action="{{ url_for('trips.update_status', id=trip.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-2">
+                    <label class="form-label small">Status Baru</label>
+                    <select name="new_status" class="form-select form-select-sm">
+                        {% for s in trip.STATUS_CHOICES %}
+                        <option value="{{ s }}" {{ 'selected' if s == trip.status }}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Keterlambatan (menit)</label>
+                    <input type="number" name="delay_minutes" class="form-control form-control-sm" value="{{ trip.delay_minutes }}" min="0">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Catatan</label>
+                    <textarea name="notes" class="form-control form-control-sm" rows="2"></textarea>
+                </div>
+                <input type="hidden" name="station_id" value="0">
+                <button type="submit" class="btn btn-sm btn-primary w-100"><i class="bi bi-arrow-repeat me-1"></i> Update</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Status Timeline -->
+<div class="card stat-card p-4">
+    <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-1"></i> Riwayat Status</h6>
+    {% if history %}
+    <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+            <thead class="table-light">
+                <tr><th>Waktu</th><th>Status Sebelumnya</th><th>Status Baru</th><th>Keterlambatan</th><th>Oleh</th><th>Catatan</th></tr>
+            </thead>
+            <tbody>
+                {% for h in history %}
+                <tr>
+                    <td class="small">{{ h.created_at.strftime('%d/%m/%Y %H:%M') if h.created_at else '-' }}</td>
+                    <td>{{ h.previous_status or '—' }}</td>
+                    <td><strong>{{ h.new_status }}</strong></td>
+                    <td>{{ h.delay_minutes }} min</td>
+                    <td class="small">{{ h.user.full_name if h.user else '-' }}</td>
+                    <td class="small text-muted">{{ h.notes or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted mb-0">Belum ada riwayat perubahan status.</p>
+    {% endif %}
+</div>
+
+<a href="{{ url_for('trips.index') }}" class="btn btn-outline-secondary mt-3"><i class="bi bi-arrow-left me-1"></i> Kembali</a>
+{% endblock %}
