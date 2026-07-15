@@ -1,0 +1,230 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Dashboard — RailOps Nusantara{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Beranda</a></li>
+<li class="breadcrumb-item active">Dashboard</li>
+{% endblock %}
+
+{% block content %}
+<h4 class="mb-4 fw-bold">Dashboard Operasional</h4>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-blue-light me-3">
+                    <i class="bi bi-train-front"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ stats.kereta_aktif }}</div>
+                    <div class="stat-label">Kereta Aktif</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-navy-light me-3">
+                    <i class="bi bi-signpost-2"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ stats.perjalanan_hari_ini }}</div>
+                    <div class="stat-label">Perjalanan Hari Ini</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-success-light me-3">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ stats.tepat_waktu }}</div>
+                    <div class="stat-label">Tepat Waktu</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-warning-light me-3">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ stats.terlambat }}</div>
+                    <div class="stat-label">Terlambat</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-danger-light me-3">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ stats.dibatalkan }}</div>
+                    <div class="stat-label">Dibatalkan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-danger-light me-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ stats.gangguan_aktif }}</div>
+                    <div class="stat-label">Gangguan Aktif</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-blue-light me-3">
+                    <i class="bi bi-hdd-rack"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ stats.ec2_running }}</div>
+                    <div class="stat-label">EC2 Running</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-blue-light me-3">
+                    <i class="bi bi-folder2-open"></i>
+                </div>
+                <div>
+                    <div class="stat-value">{{ stats.dokumen_s3 }}</div>
+                    <div class="stat-label">Dokumen S3</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-5">
+        <div class="card stat-card p-3">
+            <h6 class="fw-bold mb-3"><i class="bi bi-pie-chart"></i> Status Perjalanan</h6>
+            <div class="chart-container" style="height: 260px;">
+                <canvas id="chartStatusPerjalanan"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card stat-card p-3">
+            <h6 class="fw-bold mb-3"><i class="bi bi-graph-up"></i> Keterlambatan Harian (7 Hari)</h6>
+            <div class="chart-container" style="height: 260px;">
+                <canvas id="chartKeterlambatan"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tables -->
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card stat-card p-3">
+            <h6 class="fw-bold mb-3"><i class="bi bi-table"></i> Perjalanan Terbaru</h6>
+            <div class="table-responsive">
+                <table class="table table-railops table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Kereta</th>
+                            <th>Rute</th>
+                            <th>Berangkat</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trip in recent_trips %}
+                        <tr>
+                            <td class="fw-semibold">{{ trip.train }}</td>
+                            <td>{{ trip.route }}</td>
+                            <td>{{ trip.departure }}</td>
+                            <td>
+                                {% if trip.status == "Tepat Waktu" %}
+                                    <span class="badge badge-success">{{ trip.status }}</span>
+                                {% elif trip.status == "Terlambat" %}
+                                    <span class="badge badge-warning">{{ trip.status }}</span>
+                                {% else %}
+                                    <span class="badge badge-danger">{{ trip.status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card stat-card p-3">
+            <h6 class="fw-bold mb-3"><i class="bi bi-exclamation-triangle"></i> Gangguan Terbaru</h6>
+            <div class="table-responsive">
+                <table class="table table-railops table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Lokasi</th>
+                            <th>Jenis</th>
+                            <th>Prioritas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for incident in recent_incidents %}
+                        <tr>
+                            <td>{{ incident.location }}</td>
+                            <td>{{ incident.type }}</td>
+                            <td>
+                                {% if incident.priority == "Tinggi" %}
+                                    <span class="badge badge-danger">{{ incident.priority }}</span>
+                                {% elif incident.priority == "Sedang" %}
+                                    <span class="badge badge-warning">{{ incident.priority }}</span>
+                                {% else %}
+                                    <span class="badge badge-info">{{ incident.priority }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+    var dashboardData = {
+        tepat_waktu: {{ stats.tepat_waktu }},
+        terlambat: {{ stats.terlambat }},
+        dibatalkan: {{ stats.dibatalkan }},
+        delay_labels: {{ delay_labels | tojson }},
+        delay_values: {{ delay_values | tojson }}
+    };
+</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,21 @@
+<!-- Top Navbar -->
+<header class="top-navbar">
+    <button class="navbar-toggle-btn" id="sidebarToggle" aria-label="Toggle sidebar">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="me-auto">
+        <ol class="breadcrumb mb-0">
+            {% block breadcrumb %}
+            <li class="breadcrumb-item active">Dashboard</li>
+            {% endblock %}
+        </ol>
+    </nav>
+
+    <!-- Date -->
+    <div class="navbar-date">
+        <i class="bi bi-calendar3"></i>
+        <span id="navbarDate">{{ current_date }}</span>
+    </div>
+</header>

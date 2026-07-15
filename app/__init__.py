@@ -1,8 +1,9 @@
 """Flask application factory."""
 
 import os
+from datetime import date
 
-from flask import Flask
+from flask import Flask, render_template
 
 from config import config_by_name, Config
 
@@ -31,6 +32,12 @@ def create_app(config_class: type[Config] | None = None) -> Flask:
     # Register blueprints
     _register_blueprints(app)
 
+    # Register error handlers
+    _register_error_handlers(app)
+
+    # Context processors
+    _register_context_processors(app)
+
     return app
 
 
@@ -42,9 +49,14 @@ def _register_extensions(app: Flask) -> None:
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    login_manager.login_view = "auth.login"
+    login_manager.login_view = "main.login"
     login_manager.login_message = "Silakan login untuk mengakses halaman ini."
     login_manager.login_message_category = "warning"
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        """Load user by ID. Stub until auth module is implemented."""
+        return None
 
 
 def _register_blueprints(app: Flask) -> None:
@@ -52,3 +64,26 @@ def _register_blueprints(app: Flask) -> None:
     from app.routes import register_blueprints
 
     register_blueprints(app)
+
+
+def _register_error_handlers(app: Flask) -> None:
+    """Register custom error pages."""
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template("errors/404.html"), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        return render_template("errors/500.html"), 500
+
+
+def _register_context_processors(app: Flask) -> None:
+    """Register Jinja2 context processors."""
+
+    @app.context_processor
+    def inject_globals():
+        today = date.today()
+        return {
+            "current_date": today.strftime("%A, %d %B %Y"),
+        }

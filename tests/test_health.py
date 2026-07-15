@@ -33,11 +33,9 @@ def test_health_status_degraded_without_services(client):
     assert data["status"] in ("healthy", "degraded")
 
 
-def test_index_endpoint(client):
-    """Index endpoint should return welcome message."""
+def test_index_redirects(client):
+    """Index should redirect to dashboard."""
     response = client.get("/")
 
-    assert response.status_code == 200
-    data = json.loads(response.data)
-    assert "message" in data
-    assert "RailOps Nusantara" in data["message"]
+    assert response.status_code == 302
+    assert "/dashboard" in response.headers["Location"]

@@ -1,20 +1,340 @@
-/* RailOps Nusantara — Custom Styles */
+/* ============================================
+   RailOps Nusantara — Custom Theme
+   Dark Navy Sidebar + Light Content Area
+   ============================================ */
 
+:root {
+    --railops-navy: #0B1F3A;
+    --railops-navy-light: #132D50;
+    --railops-navy-hover: #1A3A66;
+    --railops-blue: #2E86DE;
+    --railops-blue-light: #54A0FF;
+    --railops-bg: #F4F6F9;
+    --railops-card: #FFFFFF;
+    --railops-success: #27AE60;
+    --railops-warning: #F39C12;
+    --railops-danger: #E74C3C;
+    --railops-text: #2C3E50;
+    --railops-text-muted: #7F8C8D;
+    --sidebar-width: 260px;
+    --navbar-height: 60px;
+}
+
+/* ---------- Global ---------- */
 body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background-color: var(--railops-bg);
+    color: var(--railops-text);
+    min-height: 100vh;
+}
+
+a {
+    color: var(--railops-blue);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--railops-blue-light);
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--railops-navy);
+    overflow-y: auto;
+    z-index: 1040;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--railops-navy-light);
+    min-height: var(--navbar-height);
+}
+
+.sidebar-brand i {
+    font-size: 1.4rem;
+    margin-right: 0.5rem;
+    color: var(--railops-blue-light);
+}
+
+.sidebar-nav {
+    padding: 0.5rem 0;
+    list-style: none;
+    margin: 0;
+}
+
+.sidebar-heading {
+    padding: 0.75rem 1.25rem 0.25rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--railops-text-muted);
+    font-weight: 600;
+}
+
+.sidebar-item {
+    margin: 1px 0;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1.25rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+    border-radius: 0;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.sidebar-link i {
+    width: 1.25rem;
+    margin-right: 0.75rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.sidebar-link:hover {
+    background-color: var(--railops-navy-hover);
+    color: #fff;
+}
+
+.sidebar-link.active {
+    background-color: var(--railops-blue);
+    color: #fff;
+    font-weight: 500;
+}
+
+/* ---------- Main Content ---------- */
+.main-content {
+    margin-left: var(--sidebar-width);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-main {
+/* ---------- Navbar ---------- */
+.top-navbar {
+    height: var(--navbar-height);
+    background-color: var(--railops-card);
+    border-bottom: 1px solid #E8ECF0;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.navbar-date {
+    color: var(--railops-text-muted);
+    font-size: 0.85rem;
+}
+
+.navbar-toggle-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: var(--railops-text);
+    cursor: pointer;
+    padding: 0.25rem;
+    margin-right: 0.75rem;
+}
+
+/* ---------- Content Area ---------- */
+.content-area {
     flex: 1;
+    padding: 1.5rem;
 }
 
-.navbar-brand i {
-    margin-right: 0.25rem;
+/* ---------- Footer ---------- */
+.main-footer {
+    padding: 1rem 1.5rem;
+    font-size: 0.8rem;
+    color: var(--railops-text-muted);
+    border-top: 1px solid #E8ECF0;
+    background: var(--railops-card);
 }
 
-.card:hover {
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s ease-in-out;
+/* ---------- Cards ---------- */
+.stat-card {
+    background: var(--railops-card);
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.stat-card .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--railops-text);
+}
+
+.stat-card .stat-label {
+    font-size: 0.8rem;
+    color: var(--railops-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Stat icon backgrounds */
+.bg-blue-light { background-color: rgba(46, 134, 222, 0.12); color: var(--railops-blue); }
+.bg-success-light { background-color: rgba(39, 174, 96, 0.12); color: var(--railops-success); }
+.bg-warning-light { background-color: rgba(243, 156, 18, 0.12); color: var(--railops-warning); }
+.bg-danger-light { background-color: rgba(231, 76, 60, 0.12); color: var(--railops-danger); }
+.bg-navy-light { background-color: rgba(11, 31, 58, 0.10); color: var(--railops-navy); }
+
+/* ---------- Badges ---------- */
+.badge-success { background-color: var(--railops-success); }
+.badge-warning { background-color: var(--railops-warning); }
+.badge-danger { background-color: var(--railops-danger); }
+.badge-info { background-color: var(--railops-blue); }
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+}
+
+/* ---------- Tables ---------- */
+.table-railops thead {
+    background-color: var(--railops-navy);
+    color: #fff;
+}
+
+.table-railops thead th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    border: none;
+    padding: 0.75rem;
+}
+
+.table-railops tbody td {
+    padding: 0.7rem 0.75rem;
+    vertical-align: middle;
+    font-size: 0.875rem;
+}
+
+/* ---------- Chart Container ---------- */
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-height: 280px;
+}
+
+/* ---------- Login Page ---------- */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--railops-navy) 0%, var(--railops-navy-light) 100%);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--railops-card);
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 2.5rem 2rem;
+}
+
+.login-card .login-brand {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-card .login-brand i {
+    font-size: 2.5rem;
+    color: var(--railops-blue);
+}
+
+.login-card .login-brand h4 {
+    color: var(--railops-navy);
+    margin-top: 0.5rem;
+    font-weight: 700;
+}
+
+/* ---------- Error Pages ---------- */
+.error-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--railops-bg);
+    text-align: center;
+}
+
+.error-code {
+    font-size: 6rem;
+    font-weight: 800;
+    color: var(--railops-navy);
+    line-height: 1;
+}
+
+.error-message {
+    font-size: 1.25rem;
+    color: var(--railops-text-muted);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .navbar-toggle-btn {
+        display: block;
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1035;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
 }

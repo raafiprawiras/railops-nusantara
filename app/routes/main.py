@@ -1,6 +1,8 @@
-"""Main blueprint — health check and index."""
+"""Main blueprint — dashboard, login, health check."""
 
-from flask import Blueprint, jsonify, current_app
+from datetime import date
+
+from flask import Blueprint, jsonify, redirect, render_template, url_for, current_app
 from sqlalchemy import text
 
 main_bp = Blueprint("main", __name__)
@@ -8,11 +10,55 @@ main_bp = Blueprint("main", __name__)
 
 @main_bp.route("/")
 def index():
-    """Landing page."""
-    return jsonify({
-        "message": "Selamat datang di RailOps Nusantara",
-        "version": "0.1.0",
-    })
+    """Root redirect to dashboard."""
+    return redirect(url_for("main.dashboard"))
+
+
+@main_bp.route("/dashboard")
+def dashboard():
+    """Dashboard with static operational statistics."""
+    stats = {
+        "kereta_aktif": 12,
+        "perjalanan_hari_ini": 35,
+        "tepat_waktu": 27,
+        "terlambat": 6,
+        "dibatalkan": 2,
+        "gangguan_aktif": 3,
+        "ec2_running": 2,
+        "dokumen_s3": 48,
+    }
+
+    recent_trips = [
+        {"train": "Argo Bromo", "route": "Jakarta — Surabaya", "departure": "06:00", "status": "Tepat Waktu"},
+        {"train": "Taksaka", "route": "Jakarta — Yogyakarta", "departure": "07:30", "status": "Terlambat"},
+        {"train": "Gajayana", "route": "Jakarta — Malang", "departure": "08:15", "status": "Tepat Waktu"},
+        {"train": "Sembrani", "route": "Surabaya — Jakarta", "departure": "09:00", "status": "Dibatalkan"},
+        {"train": "Argo Parahyangan", "route": "Jakarta — Bandung", "departure": "10:00", "status": "Tepat Waktu"},
+    ]
+
+    recent_incidents = [
+        {"location": "Stasiun Cirebon", "type": "Sinyal", "priority": "Tinggi"},
+        {"location": "KM 120 Semarang", "type": "Rel", "priority": "Sedang"},
+        {"location": "Stasiun Tegal", "type": "Listrik", "priority": "Rendah"},
+    ]
+
+    delay_labels = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"]
+    delay_values = [12, 8, 15, 6, 10, 4, 7]
+
+    return render_template(
+        "dashboard.html",
+        stats=stats,
+        recent_trips=recent_trips,
+        recent_incidents=recent_incidents,
+        delay_labels=delay_labels,
+        delay_values=delay_values,
+    )
+
+
+@main_bp.route("/login")
+def login():
+    """Login page (UI only, no authentication logic)."""
+    return render_template("login.html")
 
 
 @main_bp.route("/health")

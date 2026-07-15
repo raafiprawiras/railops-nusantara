@@ -1,0 +1,89 @@
+<!-- Sidebar Navigation -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <i class="bi bi-train-front-fill"></i>
+        <span>RailOps Nusantara</span>
+    </div>
+    <ul class="sidebar-nav">
+        <!-- Utama -->
+        <li class="sidebar-heading">Utama</li>
+        <li class="sidebar-item">
+            <a href="{{ url_for('main.dashboard') }}" class="sidebar-link">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+        </li>
+
+        <!-- Operasional -->
+        <li class="sidebar-heading">Operasional</li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-train-front"></i> Data Kereta
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-geo-alt"></i> Data Stasiun
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-calendar3"></i> Jadwal Perjalanan
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-activity"></i> Monitoring
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-exclamation-triangle"></i> Gangguan
+            </a>
+        </li>
+
+        <!-- Infrastruktur -->
+        <li class="sidebar-heading">Infrastruktur</li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-folder2-open"></i> Dokumen S3
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-hdd-rack"></i> Infrastruktur EC2
+            </a>
+        </li>
+
+        <!-- Laporan -->
+        <li class="sidebar-heading">Laporan</li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-bar-chart-line"></i> Laporan
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-journal-text"></i> Audit Log
+            </a>
+        </li>
+
+        <!-- Pengaturan -->
+        <li class="sidebar-heading">Pengaturan</li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-people"></i> Pengguna
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-person-circle"></i> Profil
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-gear"></i> Pengaturan
+            </a>
+        </li>
+    </ul>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
