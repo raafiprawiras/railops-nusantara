@@ -1,143 +1,50 @@
 {% extends "layouts/base.html" %}
-
 {% block title %}Data Stasiun — RailOps Nusantara{% endblock %}
-
-{% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
-<li class="breadcrumb-item active">Data Stasiun</li>
-{% endblock %}
-
+{% block breadcrumb %}<a href="{{ url_for('main.dashboard') }}">Dashboard</a> <i class="bi bi-chevron-right mx-1"></i> <span>Data Stasiun</span>{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold mb-0">Data Stasiun</h4>
+<div class="ro-page-header">
+    <div><h4 class="ro-page-title">Data Stasiun</h4><p class="ro-page-subtitle">Manajemen stasiun kereta api</p></div>
     {% if current_user.role == 'administrator' %}
-    <a href="{{ url_for('stations.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-lg me-1"></i> Tambah Stasiun
-    </a>
+    <a href="{{ url_for('stations.create') }}" class="btn ro-btn-primary"><i class="bi bi-plus-lg me-1"></i>Tambah Stasiun</a>
     {% endif %}
 </div>
-
-<!-- Search & Filter -->
-<div class="card stat-card p-3 mb-4">
+<div class="ro-filter-bar">
     <form method="GET" action="{{ url_for('stations.index') }}" class="row g-2 align-items-end">
-        <div class="col-md-5">
-            <label class="form-label small">Cari</label>
-            <input type="text" name="search" class="form-control" placeholder="Kode, nama, atau kota..." value="{{ search }}">
-        </div>
-        <div class="col-md-4">
-            <label class="form-label small">Status</label>
-            <select name="status" class="form-select">
-                <option value="">Semua Status</option>
-                {% for s in status_choices %}
-                <option value="{{ s }}" {{ 'selected' if status == s }}>{{ s }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i> Cari</button>
-        </div>
+        <div class="col-md-5"><input type="text" name="search" class="form-control ro-form-control" placeholder="Cari kode, nama, atau kota..." value="{{ search }}"></div>
+        <div class="col-md-4"><select name="status" class="form-select ro-form-select">
+            <option value="">Semua Status</option>
+            {% for s in status_choices %}<option value="{{ s }}" {{ 'selected' if status == s }}>{{ s }}</option>{% endfor %}
+        </select></div>
+        <div class="col-md-3"><button class="btn ro-btn-primary w-100"><i class="bi bi-search me-1"></i>Cari</button></div>
     </form>
 </div>
-
-<!-- Table -->
-<div class="card stat-card">
-    {% if stations %}
-    <div class="table-responsive">
-        <table class="table table-railops table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>Kode</th>
-                    <th>Nama Stasiun</th>
-                    <th>Kota</th>
-                    <th>Peron</th>
-                    <th>Status</th>
-                    <th class="text-end">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for station in stations %}
-                <tr>
-                    <td class="fw-semibold">{{ station.station_code }}</td>
-                    <td>{{ station.station_name }}</td>
-                    <td>{{ station.city }}</td>
-                    <td>{{ station.platform_count }}</td>
-                    <td>
-                        {% if station.operational_status == 'Aktif' %}
-                            <span class="badge badge-success">{{ station.operational_status }}</span>
-                        {% elif station.operational_status == 'Dalam Renovasi' %}
-                            <span class="badge badge-warning">{{ station.operational_status }}</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ station.operational_status }}</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-end">
-                        <a href="{{ url_for('stations.detail', id=station.id) }}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-eye"></i>
-                        </a>
-                        {% if current_user.role == 'administrator' %}
-                        <a href="{{ url_for('stations.edit', id=station.id) }}" class="btn btn-sm btn-outline-warning">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ station.id }}">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                        <div class="modal fade" id="deleteModal{{ station.id }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Konfirmasi Hapus</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Apakah Anda yakin ingin menghapus stasiun <strong>{{ station.station_name }}</strong>?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <form method="POST" action="{{ url_for('stations.delete', id=station.id) }}">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <button type="submit" class="btn btn-danger">Hapus</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    {% if pagination.pages > 1 %}
-    <div class="card-footer bg-white">
-        <nav>
-            <ul class="pagination pagination-sm justify-content-center mb-0">
-                <li class="page-item {{ 'disabled' if not pagination.has_prev }}">
-                    <a class="page-link" href="{{ url_for('stations.index', page=pagination.prev_num, search=search, status=status) }}">Sebelumnya</a>
-                </li>
-                {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-                    {% if p %}
-                    <li class="page-item {{ 'active' if p == pagination.page }}">
-                        <a class="page-link" href="{{ url_for('stations.index', page=p, search=search, status=status) }}">{{ p }}</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><span class="page-link">...</span></li>
-                    {% endif %}
-                {% endfor %}
-                <li class="page-item {{ 'disabled' if not pagination.has_next }}">
-                    <a class="page-link" href="{{ url_for('stations.index', page=pagination.next_num, search=search, status=status) }}">Berikutnya</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    {% endif %}
-
-    {% else %}
-    <div class="p-5 text-center text-muted">
-        <i class="bi bi-geo-alt" style="font-size: 3rem;"></i>
-        <p class="mt-2 mb-0">Belum ada data stasiun.</p>
-    </div>
-    {% endif %}
+<div class="ro-card">
+{% if stations %}
+<div class="table-responsive"><table class="ro-table"><thead><tr><th>Kode</th><th>Nama</th><th>Kota</th><th>Peron</th><th>Status</th><th class="text-end">Aksi</th></tr></thead><tbody>
+{% for station in stations %}
+<tr>
+    <td class="fw-600">{{ station.station_code }}</td><td>{{ station.station_name }}</td><td>{{ station.city }}</td><td>{{ station.platform_count }}</td>
+    <td>{% if station.operational_status == 'Aktif' %}<span class="ro-badge ro-badge-success">{{ station.operational_status }}</span>
+    {% elif station.operational_status == 'Dalam Renovasi' %}<span class="ro-badge ro-badge-warning">{{ station.operational_status }}</span>
+    {% else %}<span class="ro-badge ro-badge-secondary">{{ station.operational_status }}</span>{% endif %}</td>
+    <td class="text-end">
+        <a href="{{ url_for('stations.detail', id=station.id) }}" class="btn ro-btn-sm ro-btn-secondary"><i class="bi bi-eye"></i></a>
+        {% if current_user.role == 'administrator' %}
+        <a href="{{ url_for('stations.edit', id=station.id) }}" class="btn ro-btn-sm ro-btn-secondary"><i class="bi bi-pencil"></i></a>
+        <button class="btn ro-btn-sm ro-btn-secondary text-danger" data-bs-toggle="modal" data-bs-target="#del{{ station.id }}"><i class="bi bi-trash"></i></button>
+        <div class="modal fade" id="del{{ station.id }}" tabindex="-1"><div class="modal-dialog"><div class="modal-content rounded-ro">
+            <div class="modal-header border-0"><h6 class="modal-title fw-600">Konfirmasi Hapus</h6><button class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">Hapus <strong>{{ station.station_name }}</strong>?</div>
+            <div class="modal-footer border-0"><button class="btn ro-btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <form method="POST" action="{{ url_for('stations.delete', id=station.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn ro-btn-danger">Hapus</button></form></div>
+        </div></div></div>{% endif %}
+    </td>
+</tr>{% endfor %}</tbody></table></div>
+{% if pagination.pages > 1 %}<div class="p-3 d-flex justify-content-center"><nav><ul class="pagination pagination-sm ro-pagination mb-0">
+    <li class="page-item {{ 'disabled' if not pagination.has_prev }}"><a class="page-link" href="{{ url_for('stations.index', page=pagination.prev_num, search=search, status=status) }}">Prev</a></li>
+    {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}{% if p %}<li class="page-item {{ 'active' if p == pagination.page }}"><a class="page-link" href="{{ url_for('stations.index', page=p, search=search, status=status) }}">{{ p }}</a></li>{% else %}<li class="page-item disabled"><span class="page-link">...</span></li>{% endif %}{% endfor %}
+    <li class="page-item {{ 'disabled' if not pagination.has_next }}"><a class="page-link" href="{{ url_for('stations.index', page=pagination.next_num, search=search, status=status) }}">Next</a></li>
+</ul></nav></div>{% endif %}
+{% else %}<div class="ro-empty"><i class="bi bi-geo-alt d-block"></i><p>Belum ada data stasiun.</p></div>{% endif %}
 </div>
 {% endblock %}

@@ -1,68 +1,62 @@
 {% extends "layouts/base_auth.html" %}
-
 {% block title %}Login — RailOps Nusantara{% endblock %}
-
 {% block content %}
-<div class="login-wrapper">
-    <div class="login-card">
-        <div class="login-brand">
-            <i class="bi bi-train-front-fill"></i>
-            <h4>RailOps Nusantara</h4>
-            <p class="text-muted mb-0">Sistem Manajemen Operasional Kereta Api</p>
+<div class="ro-login-wrapper">
+    <div class="ro-login-left">
+        <div class="ro-login-illustration">
+            <i class="bi bi-train-front-fill" style="font-size:64px;opacity:0.9;"></i>
+            <h2>RailOps Nusantara</h2>
+            <p>Smart Railway Operations & Cloud Infrastructure Platform</p>
+            <div class="mt-4 d-flex gap-3 justify-content-center" style="opacity:0.6;">
+                <span><i class="bi bi-shield-check"></i> Secure</span>
+                <span><i class="bi bi-cloud"></i> Cloud</span>
+                <span><i class="bi bi-speedometer2"></i> Real-time</span>
+            </div>
         </div>
-
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+    </div>
+    <div class="ro-login-right">
+        <div class="ro-login-card animate-fade">
+            <div class="ro-login-logo">
+                <i class="bi bi-train-front-fill"></i>
+                <h4>Masuk ke RailOps</h4>
+                <p class="text-secondary-ro fs-13">Sistem Manajemen Operasional Kereta Api</p>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show fs-13" role="alert">
+                {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}{% endif %}{% endwith %}
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    <label class="ro-form-label">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text" style="border-radius:10px 0 0 10px;border-color:var(--ro-border);"><i class="bi bi-envelope"></i></span>
+                        {{ form.email(class="form-control ro-form-control", placeholder="nama@railops.id", style="border-radius:0 10px 10px 0;") }}
                     </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <form method="POST" action="{{ url_for('auth.login') }}">
-            {{ form.hidden_tag() }}
-
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                    {{ form.email(class="form-control", placeholder="nama@railops.id", id="email") }}
+                    {% if form.email.errors %}<small class="text-danger">{{ form.email.errors[0] }}</small>{% endif %}
                 </div>
-                {% if form.email.errors %}
-                    <div class="invalid-feedback d-block">{{ form.email.errors[0] }}</div>
-                {% endif %}
-            </div>
-
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                    {{ form.password(class="form-control", placeholder="Masukkan password", id="password") }}
+                <div class="mb-3">
+                    <label class="ro-form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text" style="border-radius:10px 0 0 10px;border-color:var(--ro-border);"><i class="bi bi-lock"></i></span>
+                        {{ form.password(class="form-control ro-form-control", placeholder="Masukkan password", style="border-radius:0 10px 10px 0;") }}
+                    </div>
+                    {% if form.password.errors %}<small class="text-danger">{{ form.password.errors[0] }}</small>{% endif %}
                 </div>
-                {% if form.password.errors %}
-                    <div class="invalid-feedback d-block">{{ form.password.errors[0] }}</div>
-                {% endif %}
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-check">
-                    {{ form.remember(class="form-check-input", id="remember") }}
-                    <label class="form-check-label" for="remember">Ingat saya</label>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        {{ form.remember(class="form-check-input") }}
+                        <label class="form-check-label fs-13">Ingat saya</label>
+                    </div>
                 </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100 py-2">
-                <i class="bi bi-box-arrow-in-right me-1"></i> Masuk
-            </button>
-        </form>
-
-        <p class="text-center text-muted mt-3 mb-0 small">
-            &copy; 2026 RailOps Nusantara
-        </p>
+                <button type="submit" class="btn ro-btn-primary w-100 py-2">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Masuk
+                </button>
+            </form>
+            <p class="text-center text-secondary-ro mt-4 mb-0 fs-12">&copy; 2026 RailOps Nusantara</p>
+        </div>
     </div>
 </div>
 {% endblock %}

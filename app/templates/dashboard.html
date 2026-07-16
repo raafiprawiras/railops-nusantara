@@ -1,230 +1,88 @@
 {% extends "layouts/base.html" %}
-
 {% block title %}Dashboard — RailOps Nusantara{% endblock %}
-
-{% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Beranda</a></li>
-<li class="breadcrumb-item active">Dashboard</li>
-{% endblock %}
-
+{% block breadcrumb %}<span><i class="bi bi-grid-1x2 me-1"></i>Dashboard</span>{% endblock %}
 {% block content %}
-<h4 class="mb-4 fw-bold">Dashboard Operasional</h4>
-
-<!-- Stat Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-blue-light me-3">
-                    <i class="bi bi-train-front"></i>
-                </div>
-                <div>
-                    <div class="stat-value">{{ stats.kereta_aktif }}</div>
-                    <div class="stat-label">Kereta Aktif</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-navy-light me-3">
-                    <i class="bi bi-signpost-2"></i>
-                </div>
-                <div>
-                    <div class="stat-value">{{ stats.perjalanan_hari_ini }}</div>
-                    <div class="stat-label">Perjalanan Hari Ini</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-success-light me-3">
-                    <i class="bi bi-check-circle"></i>
-                </div>
-                <div>
-                    <div class="stat-value">{{ stats.tepat_waktu }}</div>
-                    <div class="stat-label">Tepat Waktu</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-warning-light me-3">
-                    <i class="bi bi-clock-history"></i>
-                </div>
-                <div>
-                    <div class="stat-value">{{ stats.terlambat }}</div>
-                    <div class="stat-label">Terlambat</div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Welcome Banner -->
+<div class="ro-welcome animate-slide">
+    <h4>Selamat Datang, {{ current_user.full_name }}!</h4>
+    <p>{{ current_user.get_role_display() }} • {{ current_date }}</p>
 </div>
 
+<!-- Metric Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-danger-light me-3">
-                    <i class="bi bi-x-circle"></i>
-                </div>
-                <div>
-                    <div class="stat-value">{{ stats.dibatalkan }}</div>
-                    <div class="stat-label">Dibatalkan</div>
-                </div>
-            </div>
-        </div>
+    <div class="col-6 col-lg-2">
+        <div class="ro-metric ro-metric-blue"><div class="ro-metric-icon blue"><i class="bi bi-train-front"></i></div>
+        <div class="ro-metric-value">{{ stats.kereta_aktif }}</div><div class="ro-metric-label">Kereta Aktif</div></div>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-danger-light me-3">
-                    <i class="bi bi-exclamation-triangle"></i>
-                </div>
-                <div>
-                    <div class="stat-value">{{ stats.gangguan_aktif }}</div>
-                    <div class="stat-label">Gangguan Aktif</div>
-                </div>
-            </div>
-        </div>
+    <div class="col-6 col-lg-2">
+        <div class="ro-metric ro-metric-blue"><div class="ro-metric-icon blue"><i class="bi bi-signpost-2"></i></div>
+        <div class="ro-metric-value">{{ stats.perjalanan_hari_ini }}</div><div class="ro-metric-label">Perjalanan</div></div>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-blue-light me-3">
-                    <i class="bi bi-hdd-rack"></i>
-                </div>
-                <div>
-                    <div class="stat-value">{{ stats.ec2_running }}</div>
-                    <div class="stat-label">EC2 Running</div>
-                </div>
-            </div>
-        </div>
+    <div class="col-6 col-lg-2">
+        <div class="ro-metric ro-metric-green"><div class="ro-metric-icon green"><i class="bi bi-check-circle"></i></div>
+        <div class="ro-metric-value">{{ stats.tepat_waktu }}</div><div class="ro-metric-label">Tepat Waktu</div></div>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-blue-light me-3">
-                    <i class="bi bi-folder2-open"></i>
-                </div>
-                <div>
-                    <div class="stat-value">{{ stats.dokumen_s3 }}</div>
-                    <div class="stat-label">Dokumen S3</div>
-                </div>
-            </div>
-        </div>
+    <div class="col-6 col-lg-2">
+        <div class="ro-metric ro-metric-red"><div class="ro-metric-icon red"><i class="bi bi-exclamation-triangle"></i></div>
+        <div class="ro-metric-value">{{ stats.gangguan_aktif }}</div><div class="ro-metric-label">Gangguan</div></div>
+    </div>
+    <div class="col-6 col-lg-2">
+        <div class="ro-metric ro-metric-blue"><div class="ro-metric-icon blue"><i class="bi bi-hdd-rack"></i></div>
+        <div class="ro-metric-value">{{ stats.ec2_running }}</div><div class="ro-metric-label">EC2 Running</div></div>
+    </div>
+    <div class="col-6 col-lg-2">
+        <div class="ro-metric ro-metric-orange"><div class="ro-metric-icon orange"><i class="bi bi-folder2-open"></i></div>
+        <div class="ro-metric-value">{{ stats.dokumen_s3 }}</div><div class="ro-metric-label">Dokumen S3</div></div>
     </div>
 </div>
 
 <!-- Charts -->
 <div class="row g-3 mb-4">
     <div class="col-lg-5">
-        <div class="card stat-card p-3">
-            <h6 class="fw-bold mb-3"><i class="bi bi-pie-chart"></i> Status Perjalanan</h6>
-            <div class="chart-container" style="height: 260px;">
-                <canvas id="chartStatusPerjalanan"></canvas>
-            </div>
-        </div>
+        <div class="ro-card"><div class="ro-card-header"><i class="bi bi-pie-chart me-2"></i>Status Perjalanan</div>
+        <div class="ro-card-body"><div class="ro-chart-container" style="height:260px;"><canvas id="chartDoughnut"></canvas></div></div></div>
     </div>
     <div class="col-lg-7">
-        <div class="card stat-card p-3">
-            <h6 class="fw-bold mb-3"><i class="bi bi-graph-up"></i> Keterlambatan Harian (7 Hari)</h6>
-            <div class="chart-container" style="height: 260px;">
-                <canvas id="chartKeterlambatan"></canvas>
-            </div>
-        </div>
+        <div class="ro-card"><div class="ro-card-header"><i class="bi bi-graph-up me-2"></i>Keterlambatan 7 Hari</div>
+        <div class="ro-card-body"><div class="ro-chart-container" style="height:260px;"><canvas id="chartLine"></canvas></div></div></div>
     </div>
 </div>
 
-<!-- Tables -->
-<div class="row g-3">
-    <div class="col-lg-7">
-        <div class="card stat-card p-3">
-            <h6 class="fw-bold mb-3"><i class="bi bi-table"></i> Perjalanan Terbaru</h6>
-            <div class="table-responsive">
-                <table class="table table-railops table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>Kereta</th>
-                            <th>Rute</th>
-                            <th>Berangkat</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for trip in recent_trips %}
-                        <tr>
-                            <td class="fw-semibold">{{ trip.train }}</td>
-                            <td>{{ trip.route }}</td>
-                            <td>{{ trip.departure }}</td>
-                            <td>
-                                {% if trip.status == "Tepat Waktu" %}
-                                    <span class="badge badge-success">{{ trip.status }}</span>
-                                {% elif trip.status == "Terlambat" %}
-                                    <span class="badge badge-warning">{{ trip.status }}</span>
-                                {% else %}
-                                    <span class="badge badge-danger">{{ trip.status }}</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!-- Quick Actions + Recent -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-3">
+        <div class="ro-card"><div class="ro-card-header">Aksi Cepat</div><div class="ro-card-body">
+        <div class="d-grid gap-2">
+            <a href="{{ url_for('trips.create') }}" class="ro-quick-action"><i class="bi bi-plus-circle"></i><span>Tambah Jadwal</span></a>
+            <a href="{{ url_for('incidents.create') }}" class="ro-quick-action"><i class="bi bi-exclamation-circle"></i><span>Lapor Gangguan</span></a>
+            <a href="{{ url_for('documents.upload') }}" class="ro-quick-action"><i class="bi bi-cloud-upload"></i><span>Upload Dokumen</span></a>
+        </div></div></div>
     </div>
     <div class="col-lg-5">
-        <div class="card stat-card p-3">
-            <h6 class="fw-bold mb-3"><i class="bi bi-exclamation-triangle"></i> Gangguan Terbaru</h6>
-            <div class="table-responsive">
-                <table class="table table-railops table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>Lokasi</th>
-                            <th>Jenis</th>
-                            <th>Prioritas</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for incident in recent_incidents %}
-                        <tr>
-                            <td>{{ incident.location }}</td>
-                            <td>{{ incident.type }}</td>
-                            <td>
-                                {% if incident.priority == "Tinggi" %}
-                                    <span class="badge badge-danger">{{ incident.priority }}</span>
-                                {% elif incident.priority == "Sedang" %}
-                                    <span class="badge badge-warning">{{ incident.priority }}</span>
-                                {% else %}
-                                    <span class="badge badge-info">{{ incident.priority }}</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <div class="ro-card"><div class="ro-card-header"><i class="bi bi-clock-history me-2"></i>Perjalanan Terbaru</div><div class="ro-card-body p-0">
+        <table class="ro-table"><thead><tr><th>Kereta</th><th>Rute</th><th>Status</th></tr></thead><tbody>
+        {% for trip in recent_trips %}
+        <tr><td class="fw-500">{{ trip.train }}</td><td class="fs-13">{{ trip.route }}</td>
+        <td>{% if trip.status == "Tepat Waktu" %}<span class="ro-badge ro-badge-success">{{ trip.status }}</span>
+        {% elif trip.status == "Terlambat" %}<span class="ro-badge ro-badge-warning">{{ trip.status }}</span>
+        {% elif trip.status == "Dibatalkan" %}<span class="ro-badge ro-badge-danger">{{ trip.status }}</span>
+        {% else %}<span class="ro-badge ro-badge-info">{{ trip.status }}</span>{% endif %}</td></tr>
+        {% endfor %}</tbody></table></div></div>
+    </div>
+    <div class="col-lg-4">
+        <div class="ro-card"><div class="ro-card-header"><i class="bi bi-exclamation-triangle me-2"></i>Gangguan Terbaru</div><div class="ro-card-body p-0">
+        <table class="ro-table"><thead><tr><th>Lokasi</th><th>Prioritas</th></tr></thead><tbody>
+        {% for inc in recent_incidents %}
+        <tr><td class="fs-13">{{ inc.location }}</td>
+        <td>{% if inc.priority == "Tinggi" or inc.priority == "Darurat" %}<span class="ro-badge ro-badge-danger">{{ inc.priority }}</span>
+        {% elif inc.priority == "Sedang" %}<span class="ro-badge ro-badge-warning">{{ inc.priority }}</span>
+        {% else %}<span class="ro-badge ro-badge-info">{{ inc.priority }}</span>{% endif %}</td></tr>
+        {% endfor %}</tbody></table></div></div>
     </div>
 </div>
 {% endblock %}
-
 {% block extra_js %}
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<script>
-    var dashboardData = {
-        tepat_waktu: {{ stats.tepat_waktu }},
-        terlambat: {{ stats.terlambat }},
-        dibatalkan: {{ stats.dibatalkan }},
-        delay_labels: {{ delay_labels | tojson }},
-        delay_values: {{ delay_values | tojson }}
-    };
-</script>
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>var dashboardData={tepat_waktu:{{ stats.tepat_waktu }},terlambat:{{ stats.terlambat }},dibatalkan:{{ stats.dibatalkan }},delay_labels:{{ delay_labels|tojson }},delay_values:{{ delay_values|tojson }}};</script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
 {% endblock %}

@@ -1,6 +1,8 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      network: host
     ports:
       - "5000:5000"
     env_file:

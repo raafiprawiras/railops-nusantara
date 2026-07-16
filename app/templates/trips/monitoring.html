@@ -1,42 +1,37 @@
 {% extends "layouts/base.html" %}
 {% block title %}Monitoring — RailOps Nusantara{% endblock %}
-{% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
-<li class="breadcrumb-item active">Monitoring</li>
-{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('main.dashboard') }}">Dashboard</a> <i class="bi bi-chevron-right mx-1"></i> <span>Monitoring</span>{% endblock %}
 {% block content %}
-<h4 class="fw-bold mb-4"><i class="bi bi-activity me-1"></i> Monitoring Perjalanan Aktif</h4>
+<div class="ro-page-header">
+    <div><h4 class="ro-page-title"><i class="bi bi-activity me-2 text-primary-ro"></i>Railway Operation Center</h4>
+    <p class="ro-page-subtitle">Monitoring perjalanan aktif secara real-time</p></div>
+</div>
 
 {% if trips %}
 <div class="row g-3">
     {% for trip in trips %}
     <div class="col-lg-6">
-        <div class="card stat-card p-3">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <div>
-                    <span class="fw-bold">{{ trip.trip_number }}</span>
-                    <span class="text-muted ms-2">{{ trip.train.train_name }}</span>
+        <div class="ro-card" style="border-left:4px solid {% if trip.status == 'Terlambat' %}var(--ro-danger){% elif trip.status == 'Berangkat' %}var(--ro-success){% else %}var(--ro-primary){% endif %};">
+            <div class="ro-card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <span class="fw-700 fs-14">{{ trip.trip_number }}</span>
+                        <span class="text-secondary-ro ms-2 fs-13">{{ trip.train.train_name }}</span>
+                    </div>
+                    {% if trip.status == 'Terlambat' %}<span class="ro-badge ro-badge-danger">{{ trip.status }}</span>
+                    {% elif trip.status in ('Berangkat', 'Dalam Perjalanan') %}<span class="ro-badge ro-badge-success">{{ trip.status }}</span>
+                    {% else %}<span class="ro-badge ro-badge-warning">{{ trip.status }}</span>{% endif %}
                 </div>
-                {% include "trips/_status_badge.html" %}
+                <p class="fs-13 text-secondary-ro mb-1"><i class="bi bi-geo-alt me-1"></i>{{ trip.route_display }}</p>
+                <p class="fs-13 text-secondary-ro mb-2"><i class="bi bi-clock me-1"></i>{{ trip.scheduled_departure.strftime('%H:%M') }} — {{ trip.scheduled_arrival.strftime('%H:%M') }}
+                {% if trip.delay_minutes > 0 %}<span class="text-danger ms-2 fw-500">+{{ trip.delay_minutes }} min</span>{% endif %}</p>
+                <a href="{{ url_for('trips.detail', id=trip.id) }}" class="btn ro-btn-sm ro-btn-primary">Detail & Update</a>
             </div>
-            <p class="small mb-1 text-muted">
-                <i class="bi bi-geo-alt me-1"></i> {{ trip.route_display }}
-            </p>
-            <p class="small mb-2 text-muted">
-                <i class="bi bi-clock me-1"></i> {{ trip.scheduled_departure.strftime('%H:%M') }} — {{ trip.scheduled_arrival.strftime('%H:%M') }}
-                {% if trip.delay_minutes > 0 %}
-                <span class="text-danger ms-2">+{{ trip.delay_minutes }} min</span>
-                {% endif %}
-            </p>
-            <a href="{{ url_for('trips.detail', id=trip.id) }}" class="btn btn-sm btn-outline-primary">Detail & Update</a>
         </div>
     </div>
     {% endfor %}
 </div>
 {% else %}
-<div class="card stat-card p-5 text-center text-muted">
-    <i class="bi bi-check-circle" style="font-size: 3rem;"></i>
-    <p class="mt-2 mb-0">Tidak ada perjalanan aktif saat ini.</p>
-</div>
+<div class="ro-card"><div class="ro-empty"><i class="bi bi-check-circle d-block text-success"></i><p>Tidak ada perjalanan aktif saat ini.</p></div></div>
 {% endif %}
 {% endblock %}

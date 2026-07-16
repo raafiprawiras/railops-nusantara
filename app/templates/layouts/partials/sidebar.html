@@ -1,107 +1,43 @@
-<!-- Sidebar Navigation -->
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-        <i class="bi bi-train-front-fill"></i>
-        <span>RailOps Nusantara</span>
+<aside class="ro-sidebar" id="roSidebar">
+    <div class="ro-sidebar-brand">
+        <div class="ro-sidebar-brand-icon"><i class="bi bi-train-front-fill"></i></div>
+        <div class="ro-sidebar-brand-text">RailOps Nusantara<br><small>Railway Operations</small></div>
     </div>
-
-    <!-- User Profile (if logged in) -->
     {% if current_user.is_authenticated %}
-    <div class="sidebar-user px-3 py-2 border-bottom border-secondary">
-        <div class="d-flex align-items-center">
-            <div class="flex-shrink-0">
-                <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width:36px;height:36px;font-size:0.85rem;">
-                    {{ current_user.full_name[:2] | upper }}
-                </span>
-            </div>
-            <div class="flex-grow-1 ms-2 overflow-hidden">
-                <div class="text-white small fw-semibold text-truncate">{{ current_user.full_name }}</div>
-                <div class="text-muted small">{{ current_user.get_role_display() }}</div>
-            </div>
+    <div class="ro-sidebar-user">
+        <div class="ro-sidebar-avatar">{{ current_user.full_name[:2]|upper }}</div>
+        <div class="ro-sidebar-user-info">
+            <div class="ro-sidebar-user-name">{{ current_user.full_name }}</div>
+            <div class="ro-sidebar-user-role">{{ current_user.get_role_display() }}</div>
         </div>
     </div>
     {% endif %}
-
-    <ul class="sidebar-nav">
-        <!-- Utama -->
-        <li class="sidebar-heading">Utama</li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('main.dashboard') }}" class="sidebar-link">
-                <i class="bi bi-speedometer2"></i> Dashboard
-            </a>
-        </li>
-
-        <!-- Operasional -->
-        <li class="sidebar-heading">Operasional</li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('trains.index') }}" class="sidebar-link">
-                <i class="bi bi-train-front"></i> Data Kereta
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('stations.index') }}" class="sidebar-link">
-                <i class="bi bi-geo-alt"></i> Data Stasiun
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('trips.index') }}" class="sidebar-link">
-                <i class="bi bi-calendar3"></i> Jadwal Perjalanan
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('trips.monitoring') }}" class="sidebar-link">
-                <i class="bi bi-activity"></i> Monitoring
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('incidents.index') }}" class="sidebar-link">
-                <i class="bi bi-exclamation-triangle"></i> Gangguan
-            </a>
-        </li>
-
-        <!-- Infrastruktur -->
-        <li class="sidebar-heading">Infrastruktur</li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('documents.index') }}" class="sidebar-link">
-                <i class="bi bi-folder2-open"></i> Dokumen S3
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('ec2.index') }}" class="sidebar-link">
-                <i class="bi bi-hdd-rack"></i> Infrastruktur EC2
-            </a>
-        </li>
-
-        <!-- Laporan -->
-        <li class="sidebar-heading">Laporan</li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('reports.index') }}" class="sidebar-link">
-                <i class="bi bi-bar-chart-line"></i> Laporan
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('ec2.audit_logs') }}" class="sidebar-link">
-                <i class="bi bi-journal-text"></i> Audit Log
-            </a>
-        </li>
-
-        <!-- Pengaturan -->
-        <li class="sidebar-heading">Pengaturan</li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('users.index') }}" class="sidebar-link">
-                <i class="bi bi-people"></i> Pengguna
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="{{ url_for('profile.index') }}" class="sidebar-link">
-                <i class="bi bi-person-circle"></i> Profil
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
-                <i class="bi bi-gear"></i> Pengaturan
-            </a>
-        </li>
-    </ul>
+    <nav class="ro-sidebar-group">
+        <div class="ro-sidebar-group-title">Operations</div>
+        <a href="{{ url_for('main.dashboard') }}" class="ro-sidebar-link"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+        <a href="{{ url_for('trains.index') }}" class="ro-sidebar-link"><i class="bi bi-train-front"></i> Kereta</a>
+        <a href="{{ url_for('stations.index') }}" class="ro-sidebar-link"><i class="bi bi-geo-alt"></i> Stasiun</a>
+        <a href="{{ url_for('trips.index') }}" class="ro-sidebar-link"><i class="bi bi-signpost-2"></i> Jadwal</a>
+        <a href="{{ url_for('trips.monitoring') }}" class="ro-sidebar-link"><i class="bi bi-activity"></i> Monitoring</a>
+    </nav>
+    <nav class="ro-sidebar-group">
+        <div class="ro-sidebar-group-title">Incidents</div>
+        <a href="{{ url_for('incidents.index') }}" class="ro-sidebar-link"><i class="bi bi-exclamation-triangle"></i> Gangguan</a>
+        <a href="{{ url_for('ec2.audit_logs') }}" class="ro-sidebar-link"><i class="bi bi-journal-text"></i> Audit Log</a>
+    </nav>
+    <nav class="ro-sidebar-group">
+        <div class="ro-sidebar-group-title">Cloud</div>
+        <a href="{{ url_for('documents.index') }}" class="ro-sidebar-link"><i class="bi bi-cloud-arrow-up"></i> S3 Documents</a>
+        <a href="{{ url_for('ec2.index') }}" class="ro-sidebar-link"><i class="bi bi-hdd-rack"></i> EC2 Infrastructure</a>
+    </nav>
+    <nav class="ro-sidebar-group">
+        <div class="ro-sidebar-group-title">Reports</div>
+        <a href="{{ url_for('reports.index') }}" class="ro-sidebar-link"><i class="bi bi-bar-chart-line"></i> Laporan</a>
+    </nav>
+    <nav class="ro-sidebar-group">
+        <div class="ro-sidebar-group-title">System</div>
+        <a href="{{ url_for('users.index') }}" class="ro-sidebar-link"><i class="bi bi-people"></i> Pengguna</a>
+        <a href="{{ url_for('profile.index') }}" class="ro-sidebar-link"><i class="bi bi-person-circle"></i> Profil</a>
+        <a href="#" class="ro-sidebar-link"><i class="bi bi-gear"></i> Pengaturan</a>
+    </nav>
 </aside>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
