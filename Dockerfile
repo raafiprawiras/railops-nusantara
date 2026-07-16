@@ -1,33 +1,30 @@
-FROM python:3.11-bookworm
+# Base Python image
+FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_DEFAULT_TIMEOUT=300 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_RETRIES=15
-
+# Set working directory
 WORKDIR /app
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc \
-        libpq-dev \
-        curl \
-        ca-certificates \
-    && update-ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+# Prevent Python from writing .pyc files and enable unbuffered logging
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
+# Copy requirements first for Docker layer caching
 COPY requirements.txt .
 
-RUN for i in 1 2 3; do \
-        python -m pip install --no-cache-dir -r requirements.txt \
-        && break \
-        || echo "=== Attempt $i failed, retrying in 15s ===" && sleep 15; \
-    done && python -c "import flask; print('Dependencies installed successfully')"
+# Install dependencies
+RUN pip install --index-url https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir -r requirements.txt
 
+# Copy project files
 COPY . .
 
+# Create non-root user for security
+RUN groupadd -r appuser && useradd -r -g appuser -d /app appuser && chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
 EXPOSE 5000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--threads", "2", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "run:app"]
+# Run the application with Gunicorn binding to port 5000
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "app:create_app()"]
