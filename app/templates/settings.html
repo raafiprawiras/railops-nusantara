@@ -1,0 +1,74 @@
+{% extends "layouts/base.html" %}
+{% block title %}Pengaturan — RailOps Nusantara{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('main.dashboard') }}">Dashboard</a> <i class="bi bi-chevron-right mx-1"></i> <span>Pengaturan</span>{% endblock %}
+{% block content %}
+<div class="ro-page-header"><div><h4 class="ro-page-title">Pengaturan</h4><p class="ro-page-subtitle">Konfigurasi sistem dan preferensi</p></div></div>
+
+<div class="row g-4">
+<!-- General -->
+<div class="col-lg-6">
+<div class="ro-card"><div class="ro-card-header"><i class="bi bi-sliders me-2"></i>Umum</div><div class="ro-card-body">
+<table class="ro-table"><tbody>
+<tr><td class="fw-500" style="color:#475569;width:40%;">Nama Aplikasi</td><td style="color:#1E293B;">RailOps Nusantara</td></tr>
+<tr><td class="fw-500" style="color:#475569;">Versi</td><td style="color:#1E293B;">1.0.0</td></tr>
+<tr><td class="fw-500" style="color:#475569;">Tema</td><td><span class="ro-badge ro-badge-primary">Light Mode</span></td></tr>
+<tr><td class="fw-500" style="color:#475569;">Bahasa</td><td style="color:#1E293B;">Bahasa Indonesia</td></tr>
+<tr><td class="fw-500" style="color:#475569;">Timezone</td><td style="color:#1E293B;">Asia/Jakarta (WIB)</td></tr>
+</tbody></table>
+</div></div>
+</div>
+
+<!-- Account -->
+<div class="col-lg-6">
+<div class="ro-card"><div class="ro-card-header"><i class="bi bi-person-circle me-2"></i>Akun</div><div class="ro-card-body">
+<table class="ro-table"><tbody>
+<tr><td class="fw-500" style="color:#475569;width:40%;">Nama</td><td style="color:#1E293B;">{{ current_user.full_name }}</td></tr>
+<tr><td class="fw-500" style="color:#475569;">Email</td><td style="color:#1E293B;">{{ current_user.email }}</td></tr>
+<tr><td class="fw-500" style="color:#475569;">Role</td><td><span class="ro-badge ro-badge-primary">{{ current_user.get_role_display() }}</span></td></tr>
+<tr><td class="fw-500" style="color:#475569;">Login Terakhir</td><td style="color:#1E293B;">{{ current_user.last_login_at.strftime('%d/%m/%Y %H:%M') if current_user.last_login_at else '-' }}</td></tr>
+</tbody></table>
+<div class="mt-3"><a href="{{ url_for('profile.change_password') }}" class="btn ro-btn-sm ro-btn-secondary"><i class="bi bi-key me-1"></i>Ubah Password</a></div>
+</div></div>
+</div>
+
+<!-- System Status -->
+<div class="col-lg-6">
+<div class="ro-card"><div class="ro-card-header"><i class="bi bi-cpu me-2"></i>Status Sistem</div><div class="ro-card-body">
+<table class="ro-table"><tbody>
+<tr><td class="fw-500" style="color:#475569;width:40%;">Database</td><td><span class="ro-badge ro-badge-success"><i class="bi bi-circle-fill me-1" style="font-size:8px;"></i>Connected</span></td></tr>
+<tr><td class="fw-500" style="color:#475569;">LocalStack S3</td><td><span class="ro-badge ro-badge-info"><i class="bi bi-circle-fill me-1" style="font-size:8px;"></i>Configured</span></td></tr>
+<tr><td class="fw-500" style="color:#475569;">LocalStack EC2</td><td><span class="ro-badge ro-badge-info"><i class="bi bi-circle-fill me-1" style="font-size:8px;"></i>Configured</span></td></tr>
+<tr><td class="fw-500" style="color:#475569;">Environment</td><td><span class="ro-badge ro-badge-warning">Development</span></td></tr>
+</tbody></table>
+</div></div>
+</div>
+
+<!-- Appearance -->
+<div class="col-lg-6">
+<div class="ro-card"><div class="ro-card-header"><i class="bi bi-palette me-2"></i>Tampilan</div><div class="ro-card-body">
+<table class="ro-table"><tbody>
+<tr><td class="fw-500" style="color:#475569;width:40%;">Mode</td><td style="color:#1E293B;">Light Mode</td></tr>
+<tr><td class="fw-500" style="color:#475569;">Sidebar</td><td style="color:#1E293B;">Full</td></tr>
+<tr><td class="fw-500" style="color:#475569;">Animasi</td><td><span class="ro-badge ro-badge-success">Aktif</span></td></tr>
+<tr><td class="fw-500" style="color:#475569;">Font</td><td style="color:#1E293B;">Poppins</td></tr>
+</tbody></table>
+<p class="text-secondary-ro fs-12 mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>Dark mode dan kustomisasi lanjutan tersedia di versi berikutnya.</p>
+</div></div>
+</div>
+
+<!-- StackPort -->
+<div class="col-lg-6">
+<div class="ro-card"><div class="ro-card-header"><i class="bi bi-binoculars me-2"></i>StackPort Resource Browser</div><div class="ro-card-body">
+<table class="ro-table"><tbody>
+<tr><td class="fw-500" style="color:#475569;width:40%;">URL</td><td style="color:#1E293B;"><a href="http://localhost:8080" target="_blank" rel="noopener noreferrer">http://localhost:8080</a></td></tr>
+<tr><td class="fw-500" style="color:#475569;">LocalStack Endpoint</td><td style="color:#1E293B;">http://localstack:4566</td></tr>
+<tr><td class="fw-500" style="color:#475569;">Region</td><td style="color:#1E293B;">ap-southeast-1</td></tr>
+<tr><td class="fw-500" style="color:#475569;">Services</td><td><span class="ro-badge ro-badge-info">S3</span> <span class="ro-badge ro-badge-info">EC2</span></td></tr>
+</tbody></table>
+<div class="mt-3">
+<a href="http://localhost:8080" target="_blank" rel="noopener noreferrer" class="btn ro-btn-sm ro-btn-primary"><i class="bi bi-box-arrow-up-right me-1"></i>Buka StackPort</a>
+</div>
+</div></div>
+</div>
+</div>
+{% endblock %}

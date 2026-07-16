@@ -159,7 +159,8 @@ flask run
 |---------|-------|------|-----------|
 | app | Build dari Dockerfile | 5000 | Aplikasi Flask |
 | postgres | postgres:16 | 5432 | Database utama |
-| localstack | localstack/localstack | 4566 | Simulasi AWS (S3, EC2) |
+| localstack | localstack/localstack:3.8.0 | 4566 | Simulasi AWS (S3, EC2) |
+| stackport | davireis/stackport | 8080 | Resource browser LocalStack |
 
 ## Migrasi Database
 
@@ -208,6 +209,26 @@ python scripts/init_localstack.py
 # Inisialisasi instance demo
 python scripts/init_ec2_demo.py
 ```
+
+## StackPort Resource Browser
+
+StackPort adalah resource browser untuk melihat resource S3 dan EC2 pada LocalStack.
+
+**URL:** http://localhost:8080
+
+**Terhubung ke LocalStack (bukan AWS asli)**
+
+| Parameter | Nilai |
+|-----------|-------|
+| Endpoint | http://localstack:4566 |
+| Region | ap-southeast-1 |
+| Credential | test / test |
+
+StackPort menampilkan:
+- **S3:** Daftar bucket, objects, metadata, ukuran file
+- **EC2:** Instance ID, Name tag, state, type, image ID
+
+Lihat `documentation/stackport.md` untuk detail lengkap.
 
 ## Matriks Role
 

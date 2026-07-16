@@ -48,3 +48,10 @@ def change_password():
         return redirect(url_for("profile.index"))
 
     return render_template("profile/change_password.html", form=form)
+
+
+@profile_bp.route("/settings")
+@login_required
+def settings():
+    """Settings page."""
+    return render_template("settings.html")

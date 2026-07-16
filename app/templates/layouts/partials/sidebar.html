@@ -1,7 +1,10 @@
 <aside class="ro-sidebar" id="roSidebar">
     <div class="ro-sidebar-brand">
         <div class="ro-sidebar-brand-icon"><i class="bi bi-train-front-fill"></i></div>
-        <div class="ro-sidebar-brand-text">RailOps Nusantara<br><small>Railway Operations</small></div>
+        <div class="ro-sidebar-brand-text">
+            <span class="brand-rail">RailOps</span> <span class="brand-nusa">Nusantara</span>
+            <span class="brand-tagline">Railway Operations Platform</span>
+        </div>
     </div>
     {% if current_user.is_authenticated %}
     <div class="ro-sidebar-user">
@@ -38,6 +41,6 @@
         <div class="ro-sidebar-group-title">System</div>
         <a href="{{ url_for('users.index') }}" class="ro-sidebar-link"><i class="bi bi-people"></i> Pengguna</a>
         <a href="{{ url_for('profile.index') }}" class="ro-sidebar-link"><i class="bi bi-person-circle"></i> Profil</a>
-        <a href="#" class="ro-sidebar-link"><i class="bi bi-gear"></i> Pengaturan</a>
+        <a href="{{ url_for('profile.settings') }}" class="ro-sidebar-link"><i class="bi bi-gear"></i> Pengaturan</a>
     </nav>
 </aside>

@@ -1,61 +1,78 @@
 {% extends "layouts/base_auth.html" %}
 {% block title %}Login — RailOps Nusantara{% endblock %}
 {% block content %}
-<div class="ro-login-wrapper">
-    <div class="ro-login-left">
-        <div class="ro-login-illustration">
-            <i class="bi bi-train-front-fill" style="font-size:64px;opacity:0.9;"></i>
-            <h2>RailOps Nusantara</h2>
-            <p>Smart Railway Operations & Cloud Infrastructure Platform</p>
-            <div class="mt-4 d-flex gap-3 justify-content-center" style="opacity:0.6;">
-                <span><i class="bi bi-shield-check"></i> Secure</span>
-                <span><i class="bi bi-cloud"></i> Cloud</span>
-                <span><i class="bi bi-speedometer2"></i> Real-time</span>
+<style>
+.login-hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px;
+background:linear-gradient(135deg,#0F172A 0%,#1E3A5F 50%,#005BAC 100%);position:relative;overflow:hidden;}
+.login-hero::before{content:'';position:absolute;top:-150px;right:-150px;width:500px;height:500px;border-radius:50%;background:rgba(245,130,32,0.08);}
+.login-hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;border-radius:50%;background:rgba(0,91,172,0.15);}
+.login-hero-content{position:relative;z-index:2;text-align:center;color:#fff;max-width:480px;}
+.login-hero-title{font-size:52px;font-weight:800;line-height:1.1;margin-bottom:16px;}
+.login-hero-title .t-blue{background:linear-gradient(135deg,#60A5FA,#3B82F6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.login-hero-title .t-orange{background:linear-gradient(135deg,#F59E0B,#F58220);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.login-hero-sub{font-size:16px;opacity:0.8;margin-bottom:32px;line-height:1.6;}
+.login-features{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
+.login-feat{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 16px;font-size:13px;backdrop-filter:blur(4px);}
+.login-right{display:flex;align-items:center;justify-content:center;padding:48px;background:#F8FAFC;}
+.login-card{width:100%;max-width:400px;background:#fff;border-radius:20px;padding:40px 32px;box-shadow:0 8px 40px rgba(0,0,0,0.08);}
+.login-card-logo{text-align:center;margin-bottom:28px;}
+.login-card-logo i{font-size:36px;color:#005BAC;}
+.login-card-logo h4{font-weight:700;color:#1E293B;margin-top:8px;font-size:20px;}
+.login-card-logo p{color:#64748B;font-size:13px;margin:0;}
+@media(max-width:991px){.login-hero{display:none;}.login-right{min-height:100vh;}}
+</style>
+<div class="d-flex" style="min-height:100vh;">
+    <div class="login-hero flex-grow-1">
+        <div class="login-hero-content animate-fade">
+            <div class="login-hero-title"><span class="t-blue">RailOps</span><br><span class="t-orange">Nusantara</span></div>
+            <p class="login-hero-sub">Smart Railway Operations &<br>Cloud Infrastructure Platform</p>
+            <p style="font-size:14px;opacity:0.7;margin-bottom:24px;">Kelola operasional kereta api, monitoring perjalanan, manajemen gangguan, dokumen cloud, dan infrastruktur AWS dalam satu platform.</p>
+            <div class="login-features">
+                <div class="login-feat"><i class="bi bi-train-front me-1"></i> Railway Monitoring</div>
+                <div class="login-feat"><i class="bi bi-exclamation-triangle me-1"></i> Incident Management</div>
+                <div class="login-feat"><i class="bi bi-cloud me-1"></i> Cloud Infrastructure</div>
+                <div class="login-feat"><i class="bi bi-file-earmark me-1"></i> Document Management</div>
             </div>
         </div>
     </div>
-    <div class="ro-login-right">
-        <div class="ro-login-card animate-fade">
-            <div class="ro-login-logo">
+    <div class="login-right">
+        <div class="login-card animate-slide">
+            <div class="login-card-logo">
                 <i class="bi bi-train-front-fill"></i>
                 <h4>Masuk ke RailOps</h4>
-                <p class="text-secondary-ro fs-13">Sistem Manajemen Operasional Kereta Api</p>
+                <p>Silakan login untuk melanjutkan</p>
             </div>
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}{% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show fs-13" role="alert">
+            <div class="alert alert-{{ category }} alert-dismissible fade show fs-13 rounded-3" role="alert">
                 {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            {% endfor %}{% endif %}{% endwith %}
+            </div>{% endfor %}{% endif %}{% endwith %}
             <form method="POST" action="{{ url_for('auth.login') }}">
                 {{ form.hidden_tag() }}
                 <div class="mb-3">
-                    <label class="ro-form-label">Email</label>
+                    <label class="form-label fw-500" style="color:#1E293B;font-size:13px;">Email</label>
                     <div class="input-group">
-                        <span class="input-group-text" style="border-radius:10px 0 0 10px;border-color:var(--ro-border);"><i class="bi bi-envelope"></i></span>
-                        {{ form.email(class="form-control ro-form-control", placeholder="nama@railops.id", style="border-radius:0 10px 10px 0;") }}
+                        <span class="input-group-text" style="border-radius:12px 0 0 12px;background:#F8FAFC;border-color:#CBD5E1;"><i class="bi bi-envelope" style="color:#64748B;"></i></span>
+                        {{ form.email(class="form-control", placeholder="nama@railops.id", style="border-radius:0 12px 12px 0;border-color:#CBD5E1;padding:12px 14px;font-size:14px;color:#1E293B;") }}
                     </div>
                     {% if form.email.errors %}<small class="text-danger">{{ form.email.errors[0] }}</small>{% endif %}
                 </div>
                 <div class="mb-3">
-                    <label class="ro-form-label">Password</label>
+                    <label class="form-label fw-500" style="color:#1E293B;font-size:13px;">Password</label>
                     <div class="input-group">
-                        <span class="input-group-text" style="border-radius:10px 0 0 10px;border-color:var(--ro-border);"><i class="bi bi-lock"></i></span>
-                        {{ form.password(class="form-control ro-form-control", placeholder="Masukkan password", style="border-radius:0 10px 10px 0;") }}
+                        <span class="input-group-text" style="border-radius:12px 0 0 12px;background:#F8FAFC;border-color:#CBD5E1;"><i class="bi bi-lock" style="color:#64748B;"></i></span>
+                        {{ form.password(class="form-control", placeholder="Masukkan password", style="border-radius:0 12px 12px 0;border-color:#CBD5E1;padding:12px 14px;font-size:14px;color:#1E293B;") }}
                     </div>
                     {% if form.password.errors %}<small class="text-danger">{{ form.password.errors[0] }}</small>{% endif %}
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="form-check">
-                        {{ form.remember(class="form-check-input") }}
-                        <label class="form-check-label fs-13">Ingat saya</label>
-                    </div>
+                    <div class="form-check">{{ form.remember(class="form-check-input") }}<label class="form-check-label" style="font-size:13px;color:#475569;">Ingat saya</label></div>
                 </div>
-                <button type="submit" class="btn ro-btn-primary w-100 py-2">
+                <button type="submit" class="btn w-100 py-2 fw-600" style="background:#005BAC;color:#fff;border-radius:12px;font-size:14px;">
                     <i class="bi bi-box-arrow-in-right me-1"></i> Masuk
                 </button>
             </form>
-            <p class="text-center text-secondary-ro mt-4 mb-0 fs-12">&copy; 2026 RailOps Nusantara</p>
+            <p class="text-center mt-4 mb-0" style="font-size:12px;color:#94A3B8;">&copy; 2026 RailOps Nusantara</p>
         </div>
     </div>
 </div>
