@@ -3,22 +3,13 @@ services:
     build: .
     ports:
       - "5000:5000"
-    environment:
-      - FLASK_APP=run.py
-      - FLASK_DEBUG=1
-      - SECRET_KEY=dev-secret-key-change-in-production
-      - DATABASE_URL=postgresql://railops:railops_secret@postgres:5432/railops_nusantara
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_DEFAULT_REGION=ap-southeast-1
-      - AWS_ENDPOINT_URL=http://localstack:4566
-      - S3_BUCKET_NAME=railops-bucket
-      - MAX_CONTENT_LENGTH=16777216
+    env_file:
+      - .env
     depends_on:
       postgres:
         condition: service_healthy
       localstack:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - .:/app
     restart: unless-stopped
@@ -41,7 +32,7 @@ services:
     restart: unless-stopped
 
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack:3.8.0
     ports:
       - "4566:4566"
     environment:
@@ -49,6 +40,12 @@ services:
       - DEBUG=0
     volumes:
       - localstack_data:/var/lib/localstack
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4566/_localstack/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
     restart: unless-stopped
 
 volumes:

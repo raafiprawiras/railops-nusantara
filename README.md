@@ -1,6 +1,6 @@
 # RailOps Nusantara
 
-**Smart Railway Operations & Cloud Infrastructure Management System**
+**Sistem Manajemen Operasional Kereta Api Cerdas & Infrastruktur Cloud**
 
 ## Deskripsi
 
@@ -10,7 +10,7 @@ RailOps Nusantara adalah aplikasi web internal untuk manajemen operasional keret
 
 - Simulasi sistem manajemen operasional kereta api modern
 - Demonstrasi integrasi AWS (S3, EC2) melalui LocalStack tanpa koneksi AWS asli
-- Implementasi role-based access control, audit logging, dan reporting
+- Implementasi role-based access control, audit logging, dan pelaporan
 - Penerapan best practices: application factory, Blueprint, service layer, CSRF, password hashing
 
 ## Fitur
@@ -18,29 +18,29 @@ RailOps Nusantara adalah aplikasi web internal untuk manajemen operasional keret
 | Modul | Deskripsi |
 |-------|-----------|
 | Dashboard | Statistik real-time, grafik Chart.js, ringkasan operasional |
-| Data Kereta | CRUD kereta dengan search, filter, pagination |
+| Data Kereta | CRUD kereta dengan pencarian, filter, pagination |
 | Data Stasiun | CRUD stasiun Indonesia |
-| Jadwal Perjalanan | Penjadwalan, monitoring, status tracking |
-| Gangguan | Pelaporan dan penanganan gangguan dengan workflow status |
+| Jadwal Perjalanan | Penjadwalan, monitoring, pelacakan status |
+| Gangguan | Pelaporan dan penanganan gangguan dengan alur kerja status |
 | Dokumen S3 | Upload/download dokumen via LocalStack S3 |
-| Infrastruktur EC2 | Simulasi lifecycle EC2 (create/start/stop/terminate) |
-| Laporan | Report operasional dengan export CSV |
-| Pengguna | Manajemen user, profil, role-based access |
+| Infrastruktur EC2 | Simulasi siklus hidup EC2 (buat/mulai/hentikan/terminasi) |
+| Laporan | Laporan operasional dengan ekspor CSV |
+| Pengguna | Manajemen pengguna, profil, kontrol akses berbasis role |
 | Audit Log | Pencatatan seluruh operasi infrastruktur |
-| Autentikasi | Login/logout, remember me, password hashing |
+| Autentikasi | Login/logout, ingat saya, hashing password |
 
-## Technology Stack
+## Tumpukan Teknologi
 
-| Layer | Technology |
-|-------|-----------|
+| Lapisan | Teknologi |
+|---------|-----------|
 | Backend | Python 3.12, Flask |
 | Database | PostgreSQL 16 |
 | ORM | Flask-SQLAlchemy, Flask-Migrate (Alembic) |
-| Auth | Flask-Login, Flask-WTF (CSRF) |
+| Autentikasi | Flask-Login, Flask-WTF (CSRF) |
 | Frontend | Bootstrap 5, Bootstrap Icons, Chart.js |
 | Cloud | Boto3, LocalStack (S3, EC2) |
 | Container | Docker, Docker Compose |
-| Testing | pytest |
+| Pengujian | pytest |
 
 ## Arsitektur
 
@@ -60,7 +60,7 @@ Arsitektur internal menggunakan:
 - **Application Factory** (`create_app()`)
 - **Blueprint** per modul
 - **Service Layer** untuk logika bisnis dan AWS
-- **Route tipis** — hanya HTTP handling
+- **Route tipis** — hanya penanganan HTTP
 
 ## Struktur Folder
 
@@ -68,29 +68,29 @@ Arsitektur internal menggunakan:
 railops-nusantara/
 ├── app/
 │   ├── __init__.py          # Application factory
-│   ├── extensions.py        # Flask extensions
-│   ├── commands.py          # Flask CLI commands
-│   ├── models/              # SQLAlchemy models
-│   ├── routes/              # Blueprint routes
-│   ├── services/            # Business logic + AWS
-│   ├── forms/               # Flask-WTF forms
-│   ├── templates/           # Jinja2 templates
-│   ├── static/              # CSS, JS, images
-│   └── utils/               # Decorators, helpers
-├── scripts/                 # Seed & init scripts
-├── tests/                   # pytest tests
-├── migrations/              # Alembic migrations
-├── documentation/           # Project documentation
+│   ├── extensions.py        # Ekstensi Flask
+│   ├── commands.py          # Perintah CLI Flask
+│   ├── models/              # Model SQLAlchemy
+│   ├── routes/              # Route Blueprint
+│   ├── services/            # Logika bisnis + AWS
+│   ├── forms/               # Form Flask-WTF
+│   ├── templates/           # Template Jinja2
+│   ├── static/              # CSS, JS, gambar
+│   └── utils/               # Decorator, helper
+├── scripts/                 # Script seed & inisialisasi
+├── tests/                   # Tes pytest
+├── migrations/              # Migrasi Alembic
+├── documentation/           # Dokumentasi project
 ├── .kiro/                   # Kiro steering & specs
-├── config.py                # Configuration classes
-├── run.py                   # Entry point
+├── config.py                # Kelas konfigurasi
+├── run.py                   # Titik masuk aplikasi
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
 └── .env.example
 ```
 
-## Requirements
+## Prasyarat
 
 - Docker & Docker Compose
 - Python 3.12+ (untuk development lokal)
@@ -98,29 +98,29 @@ railops-nusantara/
 
 ## Instalasi & Menjalankan
 
-### Docker (Recommended)
+### Docker (Direkomendasikan)
 
 ```bash
 git clone <repository-url>
 cd railops-nusantara
 
-# Salin environment variables
+# Salin variabel lingkungan
 cp .env.example .env
 
 # Jalankan seluruh stack
 docker-compose up --build -d
 
-# Jalankan migration
+# Jalankan migrasi database
 docker-compose exec app flask db upgrade
 
-# Inisialisasi LocalStack S3 bucket
+# Inisialisasi bucket LocalStack S3
 docker-compose exec app python scripts/init_localstack.py
 
-# Seed demo data
+# Isi data demo
 docker-compose exec app flask seed-demo
 ```
 
-Aplikasi: http://localhost:5000
+Aplikasi tersedia di: http://localhost:5000
 
 ### Development Lokal (tanpa Docker)
 
@@ -131,49 +131,49 @@ source venv/bin/activate     # Linux/Mac
 
 pip install -r requirements.txt
 
-# Pastikan PostgreSQL running di localhost:5432
+# Pastikan PostgreSQL berjalan di localhost:5432
 flask db upgrade
 flask seed-demo
 flask run
 ```
 
-## Environment Variables
+## Variabel Lingkungan
 
-| Variable | Deskripsi | Default |
+| Variabel | Deskripsi | Default |
 |----------|-----------|---------|
-| FLASK_APP | Entry point | run.py |
-| FLASK_DEBUG | Debug mode | 1 |
-| SECRET_KEY | Session secret | dev-secret-key |
-| DATABASE_URL | PostgreSQL connection | postgresql://railops:railops_secret@localhost:5432/railops_nusantara |
-| AWS_ACCESS_KEY_ID | LocalStack credential | test |
-| AWS_SECRET_ACCESS_KEY | LocalStack credential | test |
+| FLASK_APP | Titik masuk | run.py |
+| FLASK_DEBUG | Mode debug | 1 |
+| SECRET_KEY | Secret sesi | dev-secret-key |
+| DATABASE_URL | Koneksi PostgreSQL | postgresql://railops:railops_secret@localhost:5432/railops_nusantara |
+| AWS_ACCESS_KEY_ID | Credential LocalStack | test |
+| AWS_SECRET_ACCESS_KEY | Credential LocalStack | test |
 | AWS_DEFAULT_REGION | Region | ap-southeast-1 |
-| AWS_ENDPOINT_URL | LocalStack endpoint | http://localhost:4566 |
-| S3_BUCKET_NAME | S3 bucket name | railops-bucket |
-| MAX_CONTENT_LENGTH | Max upload size (bytes) | 16777216 |
-| EC2_IMAGE_ID | AMI ID untuk simulasi | ami-12345678 |
+| AWS_ENDPOINT_URL | Endpoint LocalStack | http://localhost:4566 |
+| S3_BUCKET_NAME | Nama bucket S3 | railops-bucket |
+| MAX_CONTENT_LENGTH | Ukuran upload maksimal (byte) | 16777216 |
+| EC2_IMAGE_ID | ID AMI untuk simulasi | ami-12345678 |
 
-## Docker Compose Services
+## Layanan Docker Compose
 
-| Service | Image | Port | Deskripsi |
+| Layanan | Image | Port | Deskripsi |
 |---------|-------|------|-----------|
-| app | Build dari Dockerfile | 5000 | Flask application |
+| app | Build dari Dockerfile | 5000 | Aplikasi Flask |
 | postgres | postgres:16 | 5432 | Database utama |
 | localstack | localstack/localstack | 4566 | Simulasi AWS (S3, EC2) |
 
-## Migration
+## Migrasi Database
 
 ```bash
-flask db upgrade          # Jalankan semua migration
-flask db migrate -m "msg" # Generate migration baru
+flask db upgrade          # Jalankan semua migrasi
+flask db migrate -m "msg" # Generate migrasi baru
 flask db downgrade        # Rollback satu langkah
 ```
 
-## Seed Data
+## Data Seed
 
 ```bash
-flask seed-demo           # Seed data demo (idempotent)
-flask seed-demo --reset   # Reset + reseed (development only)
+flask seed-demo           # Isi data demo (idempotent, aman dijalankan berulang)
+flask seed-demo --reset   # Reset + isi ulang (khusus development)
 ```
 
 ## Akun Demo
@@ -185,12 +185,12 @@ flask seed-demo --reset   # Reset + reseed (development only)
 | dewi@railops.local | Operator2! | Operator |
 | andi@railops.local | Supervisor1! | Supervisor |
 
-## Menjalankan Test
+## Menjalankan Tes
 
 ```bash
-pytest                           # Semua test
-pytest tests/test_auth.py -v     # Test spesifik
-pytest -k "security" -v          # By keyword
+pytest                           # Semua tes
+pytest tests/test_auth.py -v     # Tes spesifik
+pytest -k "security" -v          # Berdasarkan kata kunci
 ```
 
 ## LocalStack S3
@@ -205,28 +205,28 @@ python scripts/init_localstack.py
 ## LocalStack EC2
 
 ```bash
-# Inisialisasi demo instances
+# Inisialisasi instance demo
 python scripts/init_ec2_demo.py
 ```
 
-## Role Matrix
+## Matriks Role
 
 | Fitur | Administrator | Operator | Supervisor |
 |-------|:---:|:---:|:---:|
 | Dashboard | ✓ | ✓ | ✓ |
-| Data Kereta/Stasiun (view) | ✓ | ✓ | ✓ |
+| Data Kereta/Stasiun (lihat) | ✓ | ✓ | ✓ |
 | Data Kereta/Stasiun (CRUD) | ✓ | ✗ | ✗ |
-| Jadwal (view) | ✓ | ✓ | ✓ |
-| Jadwal (create/edit) | ✓ | ✓ | ✗ |
-| Jadwal (delete) | ✓ | ✗ | ✗ |
-| Monitoring & Status Update | ✓ | ✓ | ✗ |
-| Gangguan (create/edit) | ✓ | ✓ | ✗ |
-| Gangguan (close) | ✓ | ✗ | ✓ |
+| Jadwal (lihat) | ✓ | ✓ | ✓ |
+| Jadwal (buat/edit) | ✓ | ✓ | ✗ |
+| Jadwal (hapus) | ✓ | ✗ | ✗ |
+| Monitoring & Update Status | ✓ | ✓ | ✗ |
+| Gangguan (buat/edit) | ✓ | ✓ | ✗ |
+| Gangguan (tutup) | ✓ | ✗ | ✓ |
 | Dokumen (upload) | ✓ | ✓ | ✗ |
 | Dokumen (download) | ✓ | ✓ | ✓ |
-| Dokumen (delete) | ✓ | ✗ | ✗ |
-| EC2 (create/terminate) | ✓ | ✗ | ✗ |
-| EC2 (start/stop/reboot) | ✓ | ✓ | ✗ |
+| Dokumen (hapus) | ✓ | ✗ | ✗ |
+| EC2 (buat/terminasi) | ✓ | ✗ | ✗ |
+| EC2 (mulai/hentikan/reboot) | ✓ | ✓ | ✗ |
 | Laporan | ✓ | ✓* | ✓ |
 | Manajemen Pengguna | ✓ | ✗ | ✗ |
 | Audit Log | ✓ | ✓ | ✓ |
@@ -257,39 +257,39 @@ python scripts/init_ec2_demo.py
 ## Keamanan
 
 - Password di-hash dengan Werkzeug (scrypt/pbkdf2)
-- CSRF protection pada seluruh form
-- Open redirect prevention
-- File upload: validasi extension + MIME type
-- Path traversal protection pada download
-- CSV injection prevention pada export
-- SECRET_KEY validation di production
-- AWS_ENDPOINT_URL guard — menolak operasi jika kosong
-- Content-Disposition header sanitization
-- Role-based access control
+- Proteksi CSRF pada seluruh form
+- Pencegahan open redirect
+- Upload file: validasi ekstensi + tipe MIME
+- Proteksi path traversal pada download
+- Pencegahan CSV injection pada ekspor
+- Validasi SECRET_KEY di production
+- Guard AWS_ENDPOINT_URL — menolak operasi jika kosong
+- Sanitasi header Content-Disposition
+- Kontrol akses berbasis role
 - Audit logging
 
-## Limitations
+## Keterbatasan
 
 - Simulasi AWS — tidak terhubung ke AWS asli
-- Email service tidak tersedia (reset password via flash)
-- PDF export belum implementasi (gunakan print-friendly HTML)
-- LocalStack free tier: data non-persistent setelah restart container
-- Single-node deployment (tidak HA)
+- Layanan email tidak tersedia (reset password via flash message)
+- Ekspor PDF belum diimplementasi (gunakan HTML print-friendly)
+- LocalStack free tier: data tidak persisten setelah restart container
+- Deployment single-node (tidak High Availability)
 
-## Troubleshooting
+## Pemecahan Masalah
 
 Lihat `documentation/troubleshooting.md` untuk panduan lengkap.
 
 ## Lisensi
 
-Internal use only — Tugas Besar.
+Hanya untuk penggunaan internal — Tugas Besar.
 
 ## Informasi Tugas Akademik
 
 | Item | Detail |
 |------|--------|
 | Nama Project | RailOps Nusantara |
-| Tipe | Smart Railway Operations & Cloud Infrastructure Management System |
+| Tipe | Sistem Manajemen Operasional Kereta Api Cerdas & Infrastruktur Cloud |
 | Stack Utama | Python, Flask, PostgreSQL, Boto3, LocalStack, Docker |
 | Simulasi Cloud | AWS EC2 + S3 via LocalStack |
-| Arsitektur | Monolithic Modular (Flask Application Factory + Blueprint) |
+| Arsitektur | Monolitik Modular (Flask Application Factory + Blueprint) |
