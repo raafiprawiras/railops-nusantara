@@ -17,6 +17,10 @@ logger = logging.getLogger(__name__)
 
 def get_ec2_client():
     """Create EC2 Boto3 client from app config."""
+    endpoint_url = current_app.config.get("AWS_ENDPOINT_URL", "")
+    if not endpoint_url:
+        raise RuntimeError("AWS_ENDPOINT_URL tidak dikonfigurasi.")
+
     boto_config = BotoConfig(
         connect_timeout=5,
         read_timeout=10,
@@ -24,7 +28,7 @@ def get_ec2_client():
     )
     return boto3.client(
         "ec2",
-        endpoint_url=current_app.config["AWS_ENDPOINT_URL"],
+        endpoint_url=endpoint_url,
         aws_access_key_id=current_app.config["AWS_ACCESS_KEY_ID"],
         aws_secret_access_key=current_app.config["AWS_SECRET_ACCESS_KEY"],
         region_name=current_app.config["AWS_DEFAULT_REGION"],

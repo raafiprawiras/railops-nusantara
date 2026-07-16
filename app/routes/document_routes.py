@@ -216,6 +216,12 @@ def download(id):
         flash(f"Gagal mengunduh: {result.get('error', 'Unknown error')}", "danger")
         return redirect(url_for("documents.detail", id=doc.id))
 
+    # Sanitize filename for Content-Disposition header
+    safe_filename = doc.original_filename.replace('"', "").replace("\n", "").replace("\r", "")
+    safe_filename = "".join(c for c in safe_filename if c.isprintable())
+    if not safe_filename:
+        safe_filename = "download"
+
     def generate():
         body = result["body"]
         while True:
@@ -228,7 +234,7 @@ def download(id):
         stream_with_context(generate()),
         content_type=result["content_type"],
         headers={
-            "Content-Disposition": f'attachment; filename="{doc.original_filename}"',
+            "Content-Disposition": f'attachment; filename="{safe_filename}"',
             "Content-Length": str(result.get("content_length", "")),
         },
     )

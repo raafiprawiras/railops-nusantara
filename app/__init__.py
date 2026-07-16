@@ -24,6 +24,10 @@ def create_app(config_class: type[Config] | None = None) -> Flask:
         env = os.environ.get("FLASK_ENV", "development")
         config_class = config_by_name.get(env, config_by_name["development"])
 
+    # Validate production config
+    if hasattr(config_class, "validate"):
+        config_class.validate()
+
     app.config.from_object(config_class)
 
     # Initialize extensions

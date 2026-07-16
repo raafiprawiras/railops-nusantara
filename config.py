@@ -53,6 +53,16 @@ class ProductionConfig(Config):
 
     DEBUG: bool = False
 
+    @classmethod
+    def validate(cls):
+        """Validate production config. Call during app startup."""
+        secret = os.environ.get("SECRET_KEY", "dev-secret-key")
+        if secret in ("dev-secret-key", "change-this-to-a-random-secret-key", ""):
+            raise RuntimeError(
+                "SECRET_KEY harus diatur ke nilai yang aman untuk production. "
+                "Jangan gunakan default development key."
+            )
+
 
 config_by_name: dict[str, type[Config]] = {
     "development": DevelopmentConfig,
